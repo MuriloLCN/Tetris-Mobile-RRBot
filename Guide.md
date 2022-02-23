@@ -518,6 +518,10 @@ Resets all data for that server to the defaults.
 
 Clears data for that server that are somewhat temporary.
 
+```$forgetchangermessages```
+
+Removes all role changing messages from list of interactable messages, so users can no longer use them to change roles and new ones need to be created
+
 That's all of the mechanics for now, if you have any ideas for new mechanics or changes to existing mechanics, don't hesitate to say them so this project can
 keep growing :D
 
