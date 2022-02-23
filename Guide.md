@@ -482,7 +482,7 @@ Will lead to this message on the desired channel
 
 ![example](https://user-images.githubusercontent.com/88753590/149683355-8ee6f1f8-fc8b-47ba-9e41-21c501542631.PNG)
 
-To make a vote with three options
+To make a vote with four options
 
 ```
 >$addoption &:dog: &dogs
@@ -602,3 +602,6 @@ Rewrote lots of texts
 Help command is now sent in DMs
 
 Overall cleanup and tweaking
+
+### -v10
+Changed way to store and organize data
