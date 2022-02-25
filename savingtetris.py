@@ -3,6 +3,7 @@ import datahandling
 
 
 async def check(message, serverData, data):
+    # Signals the bot that you have stored tetrises
     if message.content.startswith('$savedtetris'):
 
         name = str(message.author.id)
@@ -18,6 +19,7 @@ async def check(message, serverData, data):
             await message.add_reaction('\U0001F44D')
         return
 
+    # Pings players that stored tetrises
     if message.content.startswith('$tetristask'):
         myString = ''
 
@@ -32,6 +34,7 @@ async def check(message, serverData, data):
 
         return
 
+    # Help command
     if message.content.startswith('$infotetris'):
         await message.channel.send(texts.infotetris)
         return

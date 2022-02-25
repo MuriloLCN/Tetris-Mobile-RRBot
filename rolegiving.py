@@ -4,6 +4,8 @@ import privatedata
 
 
 async def check(client, message, serverData, data):
+    # Adds an {role: reaction} pair to be used in the creation of a role changing message.
+    # When the user reacts with a reaction, the adequate role is given
     if message.content.startswith('$addoption'):
         if not (message.author.guild_permissions.administrator or message.author.id in privatedata.whitelist):
             await message.channel.send("You don't have permission to use this command")
@@ -35,6 +37,8 @@ async def check(client, message, serverData, data):
             await message.channel.send("Incorrect syntax, use '$addrole &<reaction> &<role/option text>'")
             return
 
+    # Adds a changer message to a specific channel so users can alternate roles.
+    # Also clears the options added in the cache
     if message.content.startswith('$addchanger'):
         if not (message.author.guild_permissions.administrator or message.author.id in privatedata.whitelist):
             await message.channel.send("You don't have permission to use this command")
@@ -56,7 +60,11 @@ async def check(client, message, serverData, data):
             if serverData.cached.rolepairs[key] != '':
                 texto = texto + str(serverData.cached.rolepairs[key]) + ': ' + str(key) + '\n'
 
-        mensagem = await canal.send(texto)
+        try:
+            mensagem = await canal.send(texto)
+        except AttributeError:
+            await message.channel.send("Could not find channel with that ID")
+            return
 
         for role in serverData.cached.rolepairs:
             try:
@@ -75,6 +83,8 @@ async def check(client, message, serverData, data):
 
         datahandling.writeserverdata(message.guild.id, serverData, data)
 
+    # Uses the {role: reaction} pairs to create votes instead of changers.
+    # Votes, unlike changers, will not have their message IDs stored and reacting on them will not trigger anything.
     if message.content.startswith('$addvote'):
         if not (message.author.guild_permissions.administrator or message.author.id in privatedata.whitelist):
             await message.channel.send("You don't have permission to use this command")

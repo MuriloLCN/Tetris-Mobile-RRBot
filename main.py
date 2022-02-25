@@ -1,8 +1,10 @@
 import aiohttp.client_exceptions
 import discord
 import asyncio
+import matplotlib.pyplot as plt  # Needs to be imported here otherwise one of it's dependencies break
 
 import calculators
+import classes
 import dailyreminder
 import dataupdate
 import infocmds
@@ -10,6 +12,7 @@ import rotation
 import savingtetris
 import bonuspinging
 import rolegiving
+import graphs
 
 import privatedata
 import datahandling
@@ -26,20 +29,15 @@ alarmbotid = privatedata.alarmbotid
 data = datahandling.loadDict()
 
 
-async def waitforme(timeSpan, message, serverData):
-    await message.channel.send("Timer created to " + str(timeSpan) + " minutes from now")
-    await asyncio.sleep(timeSpan * 60)
-    await message.channel.send(serverData.currentRole + " Connect now")
-
-
 client = discord.Client(intents=intent)
 
-
+for key in data.keys():
+    data[key] = classes.updateObject(data[key])
 
 
 @client.event
 async def on_ready():
-    print('Bot conectado como {0.user}'.format(client))
+    print('Bot connected as {0.user}'.format(client))
     await client.change_presence(activity=discord.Game(name="$? for help"))
 
 
@@ -59,6 +57,7 @@ async def on_message(message):
 
     # Only loads data if the message is a command
 
+    # Se a mensagem não começar com
     if not message.content.startswith('$'):
         if not message.author.id == alarmbotid:
             return
@@ -82,12 +81,11 @@ async def on_message(message):
             try:
                 stringy = str(message.embeds[0].to_dict()['fields'][0]['name'])
                 gotId = stringy.split(' ')[3]
-                try:
-                    ind = serverData.alarms.index('temp')
-                    serverData.alarms[ind] = gotId
-                    data = datahandling.writeserverdata(message.guild.id, serverData, data)
-                except (IndexError, ValueError):
-                    return
+                for entry in serverData.alarms.keys():
+                    if serverData.alarms[entry][0] == 'temp':
+                        serverData.alarms[entry][0] = gotId
+                        break
+                datahandling.writeserverdata(message.guild.id, serverData, data)
             except (IndexError, ValueError):
                 return
 
@@ -117,6 +115,7 @@ async def on_message(message):
 
         await rolegiving.check(client, message, serverData, data)
 
+        await graphs.check(message, serverData, data)
 
 
 @client.event
@@ -131,4 +130,3 @@ except (aiohttp.client_exceptions.ClientConnectorError, Exception):
     print('Could not connect to Discord API')
     # Had to put this here because every time there was a connection error my token
     # was briefly visible on the hosting platform's log command, so this no longer happens
-

@@ -78,6 +78,8 @@ async def normalCountdown(message, serverData):
 
 
 async def check(message, serverData):
+    # Creates timer. Can be used with both GMT parameters for a specific time or a simple minute countdown for relative
+    # time
     if message.content.startswith('$createtimer'):
 
         myContent = str(message.content).split('&')

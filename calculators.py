@@ -1,25 +1,67 @@
+import classes
 import texts
 import math
 import datetime
 import privatedata
 
-
+# Raw calculation commands
 def getDays(day, month, year):
     todayDate = datetime.date.today()
     dateJoined = datetime.date(year, month, day)
     return int(abs(todayDate - dateJoined).days)
 
 
-def activityScore(lines, challenges, streak, days):
-    return (lines * challenges * streak) / days
+def activityScore(lines, challenges, streak, days, ref):
+    refdate = datetime.date.today() - ref.joindate
+    return ((refdate.days/days) * (((lines / ref.lines) + 20 * (challenges / ref.challenges) + 50 * (streak /
+                                                                                                     ref.streak))))/100
 
 
-def techniqueScore(quickPlay, marathon, allClears, tspins, tetrises):
-    return quickPlay + marathon + tetrises + 50 * allClears + 30 * tspins
+def techniqueScore(quickPlay, marathon, allClears, tspins, tetrises, ref):
+    return (9 * (quickPlay / ref.quickplayhs) + 0.001 * (marathon / ref.marathonhs) + 3 * (allClears / ref.allclears) +
+            (tspins/ref.tspins) + 0.1 * (tetrises/ref.tetrises)) / (9+0.001+3+1+0.1)
+
+
+def calculatepps(lines):
+    return round((lines * 2.5)/180, 3)  # PPS
+
+
+def calculateaverage(deltadays, lines, pps):
+    # Just in case someone needs an explanation
+    # floor(linesCleared/deltaDays) -> lines per day
+    # that * 2.5 -> pieces per day
+    # that / PPS -> seconds per day (needed to place those pieces)
+    # that / 60 / 60 -> converting to hours
+    return (((math.floor(lines / deltadays) * 2.5) / pps) / 60) / 60  # Hours played per day
+
+
+def diffcalculator(tetrises, tspins, btb, lines):
+    rate = tetrises / (tetrises + tspins)
+    return [
+        1 - ((lines - (tetrises * 4) - (tspins * 2)) / lines),  # Special line clear rate
+        btb / (tspins + tetrises),  # Back-to-backs per special line clears
+        (btb * (2 + (2 * rate))) / lines  # Back-to-backs per total line clears
+    ]
+
+
+def compcalculator(serverData, parameters):
+    ref = serverData.proprieties.referenceparameters
+    return [
+        # Player activity / Reference activity
+        activityScore(parameters.lines, parameters.challenges, parameters.streak, getDays(parameters.joindate.day,
+        parameters.joindate.month, parameters.joindate.year), ref) / activityScore(ref.lines, ref.challenges, ref.streak,
+        getDays(ref.joindate.day, ref.joindate.month, ref.joindate.year), ref),
+
+        # Player technique / Reference technique
+        techniqueScore(parameters.quickplayhs, parameters.marathonhs, parameters.allclears, parameters.tspins,
+        parameters.tetrises, ref) / techniqueScore(ref.quickplayhs, ref.marathonhs, ref.allclears, ref.tspins,
+        ref.tetrises, ref)
+    ]
 
 
 async def check(message, serverData):
 
+    # Simple PPS calculation
     if message.content.startswith('$ppscalculator'):
         try:
             lines = int(str(message.content).split(' ')[1])
@@ -28,15 +70,14 @@ async def check(message, serverData):
                                        " Example: '$ppscalculator 120'.")
             return
 
-        pps = (lines * 2.5)/180
-
-        pps = math.floor(pps * 100)/100
+        pps = calculatepps(lines)
 
         await message.channel.send("Your PPS is around " + str(pps) + "PPS.")
         return
 
     if message.guild.id in privatedata.fullAccessServers:
 
+        # Amount played per day based on profile data
         if message.content.startswith('$calculateaverage'):
 
             try:
@@ -88,12 +129,7 @@ async def check(message, serverData):
                 await message.channel.send("No reference PPS value set")
                 return
 
-            # Just in case someone needs an explanation
-            # floor(linesCleared/deltaDays) -> lines per day
-            # that * 2.5 -> pieces per day
-            # that / PPS -> seconds per day (needed to place those pieces)
-            # that / 60 / 60 -> converting to hours
-            number = (((math.floor(linesCleared/deltaDays) * 2.5)/pps)/60)/60
+            number = calculateaverage(deltaDays, linesCleared, pps)
             tableList = "\nAt PPS -> Avg time player per day:"
             myString2 = "\n"+str(pps)+" PPS -> " + str(round(number, 3)) + "h"
             myString3 = "\n1.4 PPS -> " + str(round(number*(pps/1.4), 3)) + "h"
@@ -107,6 +143,7 @@ async def check(message, serverData):
 
             return
 
+        # Amount played per day based on royale data
         if message.content.startswith('$royalecalcaverage'):
 
             try:
@@ -165,6 +202,7 @@ async def check(message, serverData):
 
             return
 
+        # Line clearance rate calculation
         if message.content.startswith('$diffcalculator'):
             texto = str(message.content)
             try:
@@ -177,10 +215,11 @@ async def check(message, serverData):
                                            "Ex: $diffcalculator 100 50 40 1500")
                 return
 
-            specialRate = 1 - ((lines - (tetrises * 4) - (tspins * 2)) / lines)
-            btbPerSpecial = btb / (tspins + tetrises)
-            rate = tetrises / (tetrises + tspins)
-            btbPerTotal = (btb * (2 + (2 * rate))) / lines
+            results = diffcalculator(tetrises, tspins, btb, lines)
+
+            specialRate = results[0]
+            btbPerSpecial = results[1]
+            btbPerTotal = results[2]
 
             specialRate = round(specialRate, 3)
             btbPerTotal = round(btbPerTotal, 3)
@@ -191,6 +230,7 @@ async def check(message, serverData):
                                        "\nB2Bs per total rate: " + str(btbPerTotal))
             return
 
+        # Team points simple calculation (not very useful imo, added per request)
         if message.content.startswith('$teamptscalculator'):
             try:
                 hours = int(str(message.content).split(' ')[1])
@@ -203,39 +243,17 @@ async def check(message, serverData):
             await message.channel.send("Average points per hour: " + str(avg))
             return
 
+        # Technique and activity calculator (created by BlakeD38)
         if message.content.startswith('$compcalculator'):
 
-            dataString = str(serverData.referenceString)
-            dataString = dataString.split(' ')
-            try:
-                d = dataString[0].split('/')[0]
-                m = dataString[0].split('/')[1]
-                y = dataString[0].split('/')[2]
-
-                comparativeDays = getDays(int(d), int(m), int(y))
-                comparativeQuickplay = int(dataString[1])
-                comparativeMarathon = int(dataString[2])
-                comparativeLines = int(dataString[3])
-                comparativeTetrises = int(dataString[4])
-                comparativeAllClears = int(dataString[5])
-                comparativeTspins = int(dataString[6])
-                comparativeChallenges = int(dataString[7])
-                comparativeStreak = int(dataString[8])
-                content = str(message.content)
-                content = content.split(' ')
-            except (ValueError, IndexError):
-                await message.channel.send("One or more of the reference values are invalid\n"
-                                           "Please check if they are all integers and all filled in\n"
-                                           "Update them with '$updatereferencevalues'")
-                await message.channel.send("Reference Values: " + str(dataString))
-                return
+            content = str(message.content)
+            content = content.split(' ')
 
             try:
                 day = int(content[1].split('/')[0])
                 month = int(content[1].split('/')[1])
                 year = int(content[1].split('/')[2])
 
-                days = getDays(day, month, year)
                 quickplay = int(content[2])
                 marathon = int(content[3])
                 lines = int(content[4])
@@ -245,13 +263,6 @@ async def check(message, serverData):
                 challenges = int(content[8])
                 streak = int(content[9])
 
-                referenceActivity = activityScore(comparativeLines, comparativeChallenges, comparativeStreak,
-                                                  comparativeDays)
-                referenceTechnique = techniqueScore(comparativeQuickplay, comparativeMarathon, comparativeAllClears,
-                                                    comparativeTspins, comparativeTetrises)
-
-                playerActivity = activityScore(lines, challenges, streak, days)
-                playerTechnique = techniqueScore(quickplay, marathon, allClears, tspins, tetrises)
             except (IndexError, ValueError):
                 await message.channel.send("Invalid syntax, please check if all parameters are filled and are " 
                                            "integers. Correct usage:\n"
@@ -259,9 +270,12 @@ async def check(message, serverData):
                                            " <lines> <tetrises> <allclears> <tspins> <challenges> <streak>")
                 return
 
-            await message.channel.send("Activity score compared to reference: " +
-                                       str(round(playerActivity / referenceActivity, 3)) +
-                                       "\nTechnique score compared to reference: " +
-                                       str(round(playerTechnique / referenceTechnique, 3)))
+            results = compcalculator(serverData, classes.Parameters(
+                year, month, day, quickplay, marathon, lines, tetrises, allClears, tspins, challenges, streak, 0
+            ))
 
+            await message.channel.send("Activity score compared to reference: " +
+                                       str(round(results[0], 3)) +
+                                       "\nTechnique score compared to reference: " +
+                                       str(round(results[1], 3)))
             return

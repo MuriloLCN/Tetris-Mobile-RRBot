@@ -170,9 +170,19 @@ h_3 = "```" \
       "$addoption &<:reaction:> &<@role/option text>\n" \
       "$addchanger <channelID>\n" \
       "$addvote <channelID>\n" \
+      "$addpoint <name> <day>/<month>/<year> <qp hs> <mt hs> <lines> <tetrises> <allclears> <tspins> <b2bs>" \
+      "$generategraphs" \
       "$setbotchannel <#channel>\n" \
       "$setreminderchannel <#channel>\n" \
-      "$updatereferencevalues <day>/<month>/<year> <qp hs> <mt hs> <lines> <tetrises> <allclears> <tspins>" \
+      "$updatereferencevalues <day>/<month>/<year> <qp hs> <mt hs> <lines> <tetrises> <allclears> <tspins> <b2bs>" \
       " <challenges> <streak>\n" \
       "$forgetchangermessages\n" \
+      "$appendchangerid <messageID>\n" \
+      "$storepoint <pointName> <day>/<month>/<year> <qp hs> <mt hs> <lines> <tetrises> <allclears> <tspins> <b2bs>\n" \
+      "$deletepoint <pointName>\n" \
+      "$loadpoint <pointName>\n" \
+      "$listpoints\n" \
+      "$clearpoints\n" \
+      "$printpoint <pointName>\n" \
+      "$loadallpoints\n" \
       "```"
