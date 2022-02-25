@@ -511,6 +511,8 @@ and
 The way this works is you add a data point based on user data from the profile tab in-game, you can name it whatever you want.
 Once you have two or more data points loaded, you can use ```$generategraphs``` to create (currently) four graphs displaying helpful information for each player.
 
+An immense shoutout to BlakeD38, without him, this mechanic would have been very limited.
+
 **Examples:**
 
 ```
