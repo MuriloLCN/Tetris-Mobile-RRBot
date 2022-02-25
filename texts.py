@@ -170,15 +170,14 @@ h_3 = "```" \
       "$addoption &<:reaction:> &<@role/option text>\n" \
       "$addchanger <channelID>\n" \
       "$addvote <channelID>\n" \
-      "$addpoint <name> <day>/<month>/<year> <qp hs> <mt hs> <lines> <tetrises> <allclears> <tspins> <b2bs>" \
-      "$generategraphs" \
+      "$addpoint <name> <day>/<month>/<year> <qp hs> <mt hs> <lines> <tetrises> <allclears> <tspins> <challenges> <streak> <b2bs>\n" \
+      "$generategraphs\n" \
       "$setbotchannel <#channel>\n" \
       "$setreminderchannel <#channel>\n" \
-      "$updatereferencevalues <day>/<month>/<year> <qp hs> <mt hs> <lines> <tetrises> <allclears> <tspins> <b2bs>" \
-      " <challenges> <streak>\n" \
+      "$updatereferencevalues <name> <day>/<month>/<year> <qp hs> <mt hs> <lines> <tetrises> <allclears> <tspins> <challenges> <streak> <b2bs>\n" \
       "$forgetchangermessages\n" \
       "$appendchangerid <messageID>\n" \
-      "$storepoint <pointName> <day>/<month>/<year> <qp hs> <mt hs> <lines> <tetrises> <allclears> <tspins> <b2bs>\n" \
+      "$storepoint <name> <day>/<month>/<year> <qp hs> <mt hs> <lines> <tetrises> <allclears> <tspins> <challenges> <streak> <b2bs>\n" \
       "$deletepoint <pointName>\n" \
       "$loadpoint <pointName>\n" \
       "$listpoints\n" \
