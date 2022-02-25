@@ -500,6 +500,127 @@ Will make this poll
 
 ![vote](https://user-images.githubusercontent.com/88753590/149683448-5ff4d7d6-fe46-4532-bbde-986433d92288.PNG)
 
+## Graph making mechanic
+
+This mechanic was added to the bot as a way to help recruiters to easily and seamlessly visualize data with a few commands.
+The basic commands are 
+```$addpoint <name> <day>/<month>/<year> <qp hs> <mt hs> <lines> <tetrises> <allclears> <tspins> <challenges> <streak> <b2bs>```
+and
+```$generategraphs```
+
+The way this works is you add a data point based on user data from the profile tab in-game, you can name it whatever you want.
+Once you have two or more data points loaded, you can use ```$generategraphs``` to create (currently) four graphs displaying helpful information for each player.
+
+**Examples:**
+
+```
+> $addpoint player1 25/2/2021 75000 550000 250000 15000 2 250 275 15 7500
+
+> $addpoint player2 25/2/2020 25000 115000 50000 4000 1 100 105 7 450
+
+> $generategraphs
+```
+Will generate these graphs, currently:
+![temp](https://user-images.githubusercontent.com/88753590/155718587-36ed709e-7a32-4bbb-bd9b-2f0b1aaab452.png)
+![temp](https://user-images.githubusercontent.com/88753590/155718603-9ee7a9d7-c3fc-4551-87e2-96047da904c5.png)
+![temp](https://user-images.githubusercontent.com/88753590/155718611-f130bc07-53e4-47c2-80a4-0474e8325f50.png)
+![temp](https://user-images.githubusercontent.com/88753590/155718622-e00ce114-87c2-4207-9c7e-1d83495b2521.png)
+
+(Please note that with only two points the scatter graphs look empty, they're better used with 3 or more points)
+
+But the biggest hardship when it comes to this mechanic is the repetitive and monotonous task of writing down all parameters every time, for each player.
+
+With that in mind, along with the two basic commands, a few other quality-of-life commands were added to store the point once and load again any time without needing to 
+write down each parameter
+
+The commands are:
+```$storepoint <name> <day>/<month>/<year> <qp hs> <mt hs> <lines> <tetrises> <allclears> <tspins> <challenges> <streak> <b2bs>```
+```$deletepoint <name>```
+```$loadpoint <name>```
+```$listpoints```
+```$printpoint <name>```
+```$clearpoints```
+```$loadallpoints```
+
+The names should be somewhat self-explanatory, but to keep things short, you can save and load points for the graphs with these.
+
+```$storepoint <param>``` Stores the data for a point with that name, that point can then be used in the future. Using this command twice with the same name will NOT
+overwrite the data.
+
+```$deletepoint <name>``` Deletes a stored point
+
+```$loadpoint <name>``` Loads a stored point for use in the graph making. Stored points will only be used in the graphs if they are loaded.
+
+```$listpoints``` Lists all points
+
+```$printpoint <name>``` Prints the parameters stored for a point
+
+```$clearpoints``` Deletes all points
+
+```$loadallpoints``` Loads all points. Warning: The radar chart gets really cluttered and hard to read with too many points.
+
+**Examples:**
+
+```
+> $storepoint user1 <parameters1...>
+
+> $storepoint user2 <parameters2...>
+
+> $storepoint user3 <parameters3...>
+
+> $storepoint user4 <parameters4...>
+
+> $listpoints 
+
+RRB:
+List of stored points:
+user1
+user2
+user3
+user4
+
+> $loadpoint user1
+
+> $loadpoint user4
+
+> $loadpoint user3
+
+> $generategraphs
+
+RRB:
+(Would make a graph with users 1, 3 and 4)
+
+> $printpoint user1
+
+RRB:
+(parameters1...)
+
+> $deletepoint user4
+
+> $listpoints
+
+RRB:
+List of stored points:
+user1
+user2
+user3
+
+> $loadallpoints
+
+> $generategraphs
+
+RRB:
+(Would make a graph with users 1,2 and 3)
+
+> $clearpoints
+
+> $printpoints
+
+RRB:
+List of stored points:
+
+```
+
 ## Other data commands
 
 ```$setreferencepps <pps>```
@@ -520,7 +641,12 @@ Clears data for that server that are somewhat temporary.
 
 ```$forgetchangermessages```
 
-Removes all role changing messages from list of interactable messages, so users can no longer use them to change roles and new ones need to be created
+Removes all role changing messages from list of interactable messages, so users can no longer use them to change roles and new ones need to be created or re-appended
+
+```$appendchangerid <messageID>```
+
+Adds a message to the list of interactable messages, so users adding reactions to it will trigger the check for giving roles, useful if server data was reset and can
+help avoid unecessary pings.
 
 That's all of the mechanics for now, if you have any ideas for new mechanics or changes to existing mechanics, don't hesitate to say them so this project can
 keep growing :D
@@ -608,4 +734,19 @@ Help command is now sent in DMs
 Overall cleanup and tweaking
 
 ### -v10
-Changed way to store and organize data
+Changed way to store and organize data to a more secure and much cleaner way. Data is now stored with dill, because it stores and retrieves classes as a whole, much better for
+maintaining. No more bubblegun and duct tape holding the code together...
+
+Added more classes to organize code
+
+Added graph making mechanic and point storing mechanic
+
+Changed way private data is stored. It now stays in a separate file far away from GitHub
+
+Moved some raw calculations to functions
+
+Added a few data handling commands
+
+Fixed some bugs
+
+Overall cleanup of the code
