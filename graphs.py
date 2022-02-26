@@ -1,12 +1,13 @@
+import datetime
 import math
 
+import discord
 import matplotlib.pyplot as plt
+import numpy as np
+
+import calculators
 import classes
 import datahandling
-import datetime
-import calculators
-import discord
-import numpy as np
 
 
 def getscale(value):
@@ -108,11 +109,26 @@ async def check(message, serverData, data):
         datahandling.writeserverdata(message.guild.id, serverData, data)
 
     # Generates graphs with the points loaded
+
+    # A -> Activity x Technique graph
+    # B -> All purpose radar graph
+    # C -> Special rate x b2b rate graph
+    # D -> Time per day x account life graph
     if message.content.startswith('$generategraphs'):
+        # Get the parameter string
+        try:
+            stringy = str(message.content).split(' ')[1].upper()
+        except (IndexError, Exception):
+            await message.channel.send("Please pass a parameter (A, B, C, AC, ACD, etc.)")
+            return
+
         # Sorry for the variable naming, it gets repetitive
         if len(serverData.cached.datapoints) <= 1:
             await message.channel.send("You need at least two data points to generate a graph")
             return
+
+        # Had to add a simple picking out system. Graphs can take a toll in resource usage.
+        remainingChecks = ['A', 'B', 'C', 'D']
 
         parameters = []
 
@@ -169,144 +185,187 @@ async def check(message, serverData, data):
         plt.style.use('seaborn-whitegrid')
 
         # Activity score x talent score
-        scorex = []
-        scorey = []
+        if 'A' in stringy:
+            scorex = []
+            scorey = []
 
-        for i in range(len(usernames)):
-            res = calculators.compcalculator(serverData, parameters[i])
-            scorex.append(res[0])
-            scorey.append(res[1])
-            plt.text(res[0], res[1], usernames[i])
+            for i in range(len(usernames)):
+                res = calculators.compcalculator(serverData, parameters[i])
+                scorex.append(res[0])
+                scorey.append(res[1])
+                plt.text(res[0], res[1], usernames[i])
 
-        plt.xlabel('Activity score')
-        plt.ylabel('Technique score')
-        plt.title('Activity score x technique score')
-        plt.scatter(scorex, scorey)
-        plt.savefig('temp.png')
+            plt.xlabel('Activity score')
+            plt.ylabel('Technique score')
+            plt.title('Activity score x technique score')
+            plt.scatter(scorex, scorey)
+            plt.savefig('temp.png')
 
-        await message.channel.send(file=discord.File('temp.png'))
-        plt.cla()
-        plt.clf()
+            await message.channel.send(file=discord.File('temp.png'))
+            plt.cla()
+            plt.clf()
+
+            remainingChecks.remove('A')
+            lastOne = True
+            for r in remainingChecks:
+                if r in stringy:
+                    lastOne = False
+                    break
+
+            if lastOne:
+                serverData.cached.datapoints.clear()
+                datahandling.writeserverdata(message.guild.id, serverData, data)
+                return
 
         # Complete data graph
-
         # Huge thanks to BlakeD38! This radar graph would not have been possible without him
+        if 'B' in stringy:
+            try:
+                # The number needed to divide the data points as to make the highest values between 0 and 1
 
-        try:
-            # The number needed to divide the data points as to make the highest values between 0 and 1
+                # Note: Most parameters are no longer used in the graph as per request, though they might be used in the future
+                getqp = getscale(max(qphs))
+                qpscale = 10 ** getqp
+                # mtscale = 10 ** getscale(max(mths))
+                getlines = getscale(max(linec))
+                linescale = 10 ** getlines
+                # tetrscale = 10 ** getscale(max(tetrises))
+                # allcscale = 10 ** getscale(max(allc))
+                # tspscale = 10 ** getscale(max(tsp))
+                # chlscale = 10 ** getscale(max(chl))
+                # strkscale = 10 ** getscale(max(strk))
+                # btbscale = 10 ** getscale(max(btb))
 
-            # Note: Most parameters are no longer used in the graph as per request, though they might be used in the future
-            getqp = getscale(max(qphs))
-            qpscale = 10 ** getqp
-            # mtscale = 10 ** getscale(max(mths))
-            getlines = getscale(max(linec))
-            linescale = 10 ** getlines
-            # tetrscale = 10 ** getscale(max(tetrises))
-            # allcscale = 10 ** getscale(max(allc))
-            # tspscale = 10 ** getscale(max(tsp))
-            # chlscale = 10 ** getscale(max(chl))
-            # strkscale = 10 ** getscale(max(strk))
-            # btbscale = 10 ** getscale(max(btb))
+                getavg = getscale(max(avglinesday))
+                avglinesdayscale = (10 ** getavg)
 
-            getavg = getscale(max(avglinesday))
-            avglinesdayscale = (10 ** getavg)
+                gettech = getscale(max(techscore))
+                techscorescale = 10 ** gettech
 
-            gettech = getscale(max(techscore))
-            techscorescale = 10 ** gettech
+                getspecial = getscale(max(specialrate))
+                specialratescale = 10 ** getspecial
 
-            getspecial = getscale(max(specialrate))
-            specialratescale = 10 ** getspecial
+                # Just a quick formatting in the names to help seeing the scales
 
-            # Just a quick formatting in the names to help seeing the scales
+            except (IndexError, ValueError):
+                await message.channel.send("There are no data points for the calculations")
+                return
 
-        except (IndexError, ValueError):
-            await message.channel.send("There are no data points for the calculations")
-            return
+            # categories = ['Quick Play HS', 'Marathon HS', 'Lines cleared', 'Tetrises', 'All clears', 'TSpins',
+            #              'Challenges completed', 'Login Streak', 'Back-to-backs']
+            categories = ['Lines per day (10^{})'.format(str(getavg)),
+                          'Technique Score (10^{})'.format(str(gettech)),
+                          'Quick Play HS (10^{})'.format(str(getqp)),
+                          'Total Lines (10^{})'.format(str(getlines)),
+                          'Special Line Clears Rate (10^{})'.format(str(getspecial))]
+            categories = [*categories, categories[0]]
 
-        # categories = ['Quick Play HS', 'Marathon HS', 'Lines cleared', 'Tetrises', 'All clears', 'TSpins',
-        #              'Challenges completed', 'Login Streak', 'Back-to-backs']
-        categories = ['Lines per day (10^{})'.format(str(getavg)),
-                      'Technique Score (10^{})'.format(str(gettech)),
-                      'Quick Play HS (10^{})'.format(str(getqp)),
-                      'Total Lines (10^{})'.format(str(getlines)),
-                      'Special Line Clears Rate (10^{})'.format(str(getspecial))]
-        categories = [*categories, categories[0]]
+            # ref = serverData.proprieties.referenceparameters
 
-        # ref = serverData.proprieties.referenceparameters
+            referencePlayer = [1, 1, 1, 1, 1]  # This is just here to get the lengh, reference data is no longer used on the graph
+            referencePlayer = [*referencePlayer, referencePlayer[0]]
 
-        referencePlayer = [1, 1, 1, 1, 1]  # This is just here to get the lengh, reference data is no longer used on the graph
-        referencePlayer = [*referencePlayer, referencePlayer[0]]
+            label_loc = np.linspace(start=0, stop=2 * np.pi, num=len(referencePlayer))
 
-        label_loc = np.linspace(start=0, stop=2 * np.pi, num=len(referencePlayer))
+            plt.figure(figsize=(8, 8))
+            plt.subplot(polar=True)
+            # plt.plot(label_loc, referencePlayer, label='Reference Player')
+            plt.title('All purpose visualizer', size=20, y=1.05)
 
-        plt.figure(figsize=(8, 8))
-        plt.subplot(polar=True)
-        # plt.plot(label_loc, referencePlayer, label='Reference Player')
-        plt.title('All purpose visualizer', size=20, y=1.05)
+            for i in range(len(usernames)):
+                # Everything is divided by scale so that it all goes between 0 and 1
+                # playerdata = [qphs[i]/qpscale, mths[i]/mtscale, linec[i]/linescale, tetrises[i]/tetrscale,
+                #              allc[i]/allcscale, tsp[i]/tspscale, chl[i]/chlscale, strk[i]/strkscale, btb[i]/btbscale]
+                playerdata = [avglinesday[i]/avglinesdayscale, techscore[i]/techscorescale, qphs[i]/qpscale,
+                              linec[i]/linescale, specialrate[i]/specialratescale]
+                playerdata = [*playerdata, playerdata[0]]
+                plt.plot(label_loc, playerdata, label=usernames[i])
 
+            lines, labels = plt.thetagrids(np.degrees(label_loc), labels=categories)
+            plt.legend()
+            plt.savefig('temp.png')
 
+            await message.channel.send(file=discord.File('temp.png'))
+            plt.cla()
+            plt.clf()
 
-        for i in range(len(usernames)):
-            # Everything is divided by scale so that it all goes between 0 and 1
-            # playerdata = [qphs[i]/qpscale, mths[i]/mtscale, linec[i]/linescale, tetrises[i]/tetrscale,
-            #              allc[i]/allcscale, tsp[i]/tspscale, chl[i]/chlscale, strk[i]/strkscale, btb[i]/btbscale]
-            playerdata = [avglinesday[i]/avglinesdayscale, techscore[i]/techscorescale, qphs[i]/qpscale,
-                          linec[i]/linescale, specialrate[i]/specialratescale]
-            playerdata = [*playerdata, playerdata[0]]
-            plt.plot(label_loc, playerdata, label=usernames[i])
+            remainingChecks.remove('B')
+            lastOne = True
+            for r in remainingChecks:
+                if r in stringy:
+                    lastOne = False
+                    break
 
-        lines, labels = plt.thetagrids(np.degrees(label_loc), labels=categories)
-        plt.legend()
-        plt.savefig('temp.png')
-
-        await message.channel.send(file=discord.File('temp.png'))
-        plt.cla()
-        plt.clf()
+            if lastOne:
+                serverData.cached.datapoints.clear()
+                datahandling.writeserverdata(message.guild.id, serverData, data)
+                return
 
         # Special rate x b2b per special
-        ratex = []
-        ratey = []
+        if 'C' in stringy:
+            ratex = []
+            ratey = []
 
-        for i in range(len(usernames)):
-            res = calculators.diffcalculator(tetrises[i], tsp[i], btb[i], linec[i])
-            ratex.append(res[0])
-            ratey.append(res[2])
-            plt.text(res[0], res[2], usernames[i])
+            for i in range(len(usernames)):
+                res = calculators.diffcalculator(tetrises[i], tsp[i], btb[i], linec[i])
+                ratex.append(res[0])
+                ratey.append(res[2])
+                plt.text(res[0], res[2], usernames[i])
 
-        plt.xlabel('Special line clears rate')
-        plt.ylabel('B2B line clears rate')
-        plt.title('Special line clears rate x b2b line clears rate')
-        plt.scatter(ratex, ratey)
-        plt.savefig('temp.png')
+            plt.xlabel('Special line clears rate')
+            plt.ylabel('B2B line clears rate')
+            plt.title('Special line clears rate x b2b line clears rate')
+            plt.scatter(ratex, ratey)
+            plt.savefig('temp.png')
 
-        await message.channel.send(file=discord.File('temp.png'))
-        plt.cla()
-        plt.clf()
+            await message.channel.send(file=discord.File('temp.png'))
+            plt.cla()
+            plt.clf()
+
+            remainingChecks.remove('C')
+            lastOne = True
+            for r in remainingChecks:
+                if r in stringy:
+                    lastOne = False
+                    break
+
+            if lastOne:
+                serverData.cached.datapoints.clear()
+                datahandling.writeserverdata(message.guild.id, serverData, data)
+                return
 
         # time played per day x account lifespan
+        if 'D' in stringy:
+            timeperday = []
+            acclife = []
 
-        timeperday = []
-        acclife = []
+            for i in range(len(usernames)):
+                res = calculators.calculateaverage(accountLife[i].days, linec[i], serverData.proprieties.referencepps)
+                res = res * 60
+                timeperday.append(res)
+                plt.text(accountLife[i].days, res, usernames[i])
 
-        for i in range(len(usernames)):
-            res = calculators.calculateaverage(accountLife[i].days, linec[i], serverData.proprieties.referencepps)
-            res = res * 60
-            timeperday.append(res)
-            plt.text(accountLife[i].days, res, usernames[i])
+            for i in accountLife:
+                acclife.append(int(i.days))
 
-        for i in accountLife:
-            acclife.append(int(i.days))
+            plt.xlabel('Account life (in days)')
+            plt.ylabel('Time played per day (at {} pps, in minutes)'.format(str(serverData.proprieties.referencepps)))
+            plt.title('Time played per day x account life')
+            plt.scatter(acclife, timeperday)
+            plt.savefig('temp.png')
 
-        plt.xlabel('Account life (in days)')
-        plt.ylabel('Time played per day (at {} pps, in minutes)'.format(str(serverData.proprieties.referencepps)))
-        plt.title('Time played per day x account life')
-        plt.scatter(acclife, timeperday)
-        plt.savefig('temp.png')
+            await message.channel.send(file=discord.File('temp.png'))
+            plt.cla()
+            plt.clf()
 
-        await message.channel.send(file=discord.File('temp.png'))
-        plt.cla()
-        plt.clf()
+            remainingChecks.remove('D')
+            lastOne = True
+            for r in remainingChecks:
+                if r in stringy:
+                    lastOne = False
+                    break
 
-        serverData.cached.datapoints.clear()
-
-        datahandling.writeserverdata(message.guild.id, serverData, data)
+            if lastOne:
+                serverData.cached.datapoints.clear()
+                datahandling.writeserverdata(message.guild.id, serverData, data)
+                return
