@@ -1,7 +1,9 @@
 import datetime
 
-
 # Main data object with semi-persistent data
+
+
+
 class ServerData:
     def __init__(self):
         self.id = ''
@@ -50,45 +52,27 @@ class Parameters:
         self.backtoback = btb
 
 
-# Function to update all previously stored objects in order to avoid missing attributes when a new feature is made
-def updateObject(oldObject):
-    newObject = ServerData()
+lookout = [Custom, Cache, Parameters]
 
-    newObject.id = oldObject.id
-    newObject.alarms = oldObject.alarms
-    newObject.rolechangerids = oldObject.rolechangerids
 
-    # New things that are added to the main ServerData class might need to be checked individually after each update,
-    # though after being run once they can be skipped as all servers are updated when the bot is turned on
-    try:
-        newObject.storedpoints = oldObject.storedpoints
-    except AttributeError:
-        newObject.storedpoints = dict()
-
-    newCache = Cache()
-    newProprieties = Custom()
-    newParameters = Parameters(2021, 6, 15, 100000, 1000000, 75000, 10000, 50, 750, 1000, 100, 5000)
-
-    for var in vars(oldObject.cached):
-        try:
-            newCache.var = var
-        except AttributeError:
-            pass
-
-    for var in vars(oldObject.proprieties):
-        try:
-            newProprieties.var = var
-        except AttributeError:
-            pass
-
-    for var in vars(oldObject.proprieties.referenceparameters):
-        try:
-            newParameters.var = var
-        except AttributeError:
-            pass
-
-    newObject.cached = newCache
-    newObject.proprieties = newProprieties
-    newObject.proprieties.referenceparameters = newParameters
-
+def recursiveInwardsCheck(oldObject, newObject):
+    for var in vars(oldObject):
+        if type(getattr(oldObject, var)) not in lookout:
+            if var not in vars(newObject):
+                pass
+            else:
+                ltz = getattr(oldObject, var)
+                setattr(newObject, var, ltz)
+        else:
+            recursiveInwardsCheck(getattr(oldObject, var), getattr(newObject, var))
     return newObject
+
+# Function to update all previously stored objects in order to avoid missing attributes when a new feature is made
+
+
+def updateObject(oldObject):
+    newObject = ServerData()  # Blank object
+
+    return recursiveInwardsCheck(oldObject, newObject)
+
+
