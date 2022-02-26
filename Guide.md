@@ -502,11 +502,14 @@ Will make this poll
 
 ## Graph making mechanic
 
+EDIT: After noticing that generating all graphs at once would flood the chats a bit and also spike RAM usage for a moment, the decisison was to add a choice to
+the user of which graphs to generate. There are currently four graphs that are used with the parameters A, B, C and D.
+
 This mechanic was added to the bot as a way to help recruiters to easily and seamlessly visualize data with a few commands.
 The basic commands are 
 ```$addpoint <name> <day>/<month>/<year> <qp hs> <mt hs> <lines> <tetrises> <allclears> <tspins> <challenges> <streak> <b2bs>```
 and
-```$generategraphs```
+```$generategraphs <graphs to generate>```
 
 The way this works is you add a data point based on user data from the profile tab in-game, you can name it whatever you want.
 Once you have two or more data points loaded, you can use ```$generategraphs``` to create (currently) four graphs displaying helpful information for each player.
@@ -522,6 +525,9 @@ An immense shoutout to BlakeD38, without him, this mechanic would have been very
 
 > $generategraphs
 ```
+Note: On current version, this will not generate. In order to generate the first graph, use parameter 'A', in order to generate third and fourth graphs at once,
+use parameter 'CD', and so on. In order to generate all four use parameter 'ABCD'.
+
 Will generate these graphs, currently:
 ![temp](https://user-images.githubusercontent.com/88753590/155718587-36ed709e-7a32-4bbb-bd9b-2f0b1aaab452.png)
 ![temp](https://user-images.githubusercontent.com/88753590/155718603-9ee7a9d7-c3fc-4551-87e2-96047da904c5.png)
