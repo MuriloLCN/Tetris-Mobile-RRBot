@@ -9,6 +9,11 @@ import calculators
 import classes
 import datahandling
 
+import gc
+
+TWO_PI = 6.283185307179586
+PI = TWO_PI / 2
+
 
 def getscale(value):
     if value < 0:
@@ -21,6 +26,19 @@ def getscale(value):
         scl += 1
 
     return scl
+
+
+def attLinspace(start, end, num):
+    arr = []
+    step = (end - start)/(num - 1)
+    for i in range(num):
+        arr.append(start + (i*step))
+
+    return arr
+
+
+def attDegrees(val):
+    return round((val * 180)/PI)
 
 
 async def check(message, serverData, data):
@@ -172,8 +190,6 @@ async def check(message, serverData, data):
             # strk.append(entry.streak)
             btb.append(entry.backtoback)
 
-            #avglinesday.append(calculators.calculateaverage((datetime.date.today() - entry.joindate).days, entry.lines,
-            #                                                serverData.proprieties.referencepps) * 60)
             avglinesday.append(math.floor(entry.lines / (datetime.date.today() - entry.joindate).days))
 
             techscore.append(calculators.techniqueScore(entry.quickplayhs, entry.marathonhs, entry.allclears,
@@ -219,6 +235,7 @@ async def check(message, serverData, data):
 
         # Complete data graph
         # Huge thanks to BlakeD38! This radar graph would not have been possible without him
+
         if 'B' in stringy:
             try:
                 # The number needed to divide the data points as to make the highest values between 0 and 1
@@ -265,12 +282,18 @@ async def check(message, serverData, data):
             referencePlayer = [1, 1, 1, 1, 1]  # This is just here to get the lengh, reference data is no longer used on the graph
             referencePlayer = [*referencePlayer, referencePlayer[0]]
 
-            label_loc = np.linspace(start=0, stop=2 * np.pi, num=len(referencePlayer))
+            label_loc = attLinspace(0, TWO_PI, len(referencePlayer))
+            deg_arr = []
+            for i in label_loc:
+                deg_arr.append(attDegrees(i))
+            deg_arr = np.array(deg_arr)
+            label_loc = np.array(label_loc)
 
-            plt.figure(figsize=(8, 8))
+
+            # plt.figure(figsize=(8, 8))
             plt.subplot(polar=True)
             # plt.plot(label_loc, referencePlayer, label='Reference Player')
-            plt.title('All purpose visualizer', size=20, y=1.05)
+            plt.title('All purpose visualizer')
 
             for i in range(len(usernames)):
                 # Everything is divided by scale so that it all goes between 0 and 1
@@ -281,13 +304,24 @@ async def check(message, serverData, data):
                 playerdata = [*playerdata, playerdata[0]]
                 plt.plot(label_loc, playerdata, label=usernames[i])
 
-            lines, labels = plt.thetagrids(np.degrees(label_loc), labels=categories)
+            #lines, labels = plt.thetagrids(np.degrees(label_loc), labels=categories)
+            lines, labels = plt.thetagrids(deg_arr, labels=categories)
             plt.legend()
             plt.savefig('temp.png')
 
             await message.channel.send(file=discord.File('temp.png'))
             plt.cla()
             plt.clf()
+
+            del playerdata
+            del label_loc
+            del lines
+            del labels
+
+            gc.collect()
+
+            # Optimisation successful!!! Replacing some numpy methods for my own, reducing some of the
+            # style parameters and collecting unused variables did the trick.
 
             remainingChecks.remove('B')
             lastOne = True
