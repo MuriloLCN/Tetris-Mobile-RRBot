@@ -1,7 +1,8 @@
 import re
+
+import classes
 import datahandling
 import privatedata
-import classes
 
 
 # It used to help keeping them in separate functions in the older versions of the code when everything was messy, I'm
@@ -280,8 +281,12 @@ async def check(message, serverData, data):
                 print("Error: {}".format(str(e)))
                 return
 
-            param = classes.Parameters(year, month, day, quickplayhs, marathonhs, linec, tetrises, allclears, tspins,
+            try:
+                param = classes.Parameters(year, month, day, quickplayhs, marathonhs, linec, tetrises, allclears, tspins,
                                        challenges, streak, btbs)
+            except ValueError:
+                await message.channel.send("Invalid date format")
+                return
 
             serverData.storedpoints.update({username: param})
             await message.add_reaction('\U0001F44D')
