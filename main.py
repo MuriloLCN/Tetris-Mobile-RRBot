@@ -101,8 +101,10 @@ async def on_message(message):
 
     await calculators.check(message, serverData)
 
+    await matchmaking.check(message, matches, client)
+
     # Usually it's better to turn this into a guard clause but keeping it indented helps me to see which one's which
-    if message.guild.id not in blacklist:
+    if message.guild.id in privatedata.fullAccessServers:
 
         await rotation.check(message, serverData, data)
 
@@ -115,8 +117,6 @@ async def on_message(message):
         await rolegiving.check(client, message, serverData, data)
 
         await graphs.check(message, serverData, data)
-
-        await matchmaking.check(message, matches, client)
 
 
 @client.event

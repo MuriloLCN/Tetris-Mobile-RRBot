@@ -79,7 +79,7 @@ async def check(message, serverData, data):
             await message.channel.send("You do not have permission to use this command")
         return
 
-    if message.guild.id not in privatedata.blacklist:
+    if message.guild.id in privatedata.fullAccessServers:
         # Changes 'referencepps', used in calculations
         if message.content.startswith('$setreferencepps'):
             try:

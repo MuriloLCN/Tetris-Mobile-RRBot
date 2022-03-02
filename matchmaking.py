@@ -4,6 +4,15 @@ from copy import deepcopy
 import asyncio
 import gc
 
+# TODO List
+'''
+Add custom timer
+Add custom player limit
+Add premature start
+Add more control over matchmaking
+Add host (first player in queue)
+And more...
+'''
 
 async def updateMessage(message, matches, client):
     for i in matches.players.keys():

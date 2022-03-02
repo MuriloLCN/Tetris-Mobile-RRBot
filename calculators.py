@@ -77,7 +77,7 @@ async def check(message, serverData):
         await message.channel.send("Your PPS is around " + str(pps) + "PPS.")
         return
 
-    if message.guild.id not in privatedata.blacklist:
+    if message.guild.id in privatedata.fullAccessServers:
 
         # Amount played per day based on profile data
         if message.content.startswith('$calculateaverage'):

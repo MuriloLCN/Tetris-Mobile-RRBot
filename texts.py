@@ -139,7 +139,7 @@ h_1 = "```Tetris Mobile RRBot command list\n\n" \
       "Note: Messages sent on my DMs are forwarded to humans. Beep boop.\n" \
       "```" \
 
-h_2 = "```Verified server commands (if you can see this, you have access)\n\n" \
+h_2 = "```Verified server commands (only verified servers have access)\n\n" \
       "> Rotation system\n" \
       "$rotation | Help for rotation\n" \
       "$enter | Join/leave EN queue\n" \

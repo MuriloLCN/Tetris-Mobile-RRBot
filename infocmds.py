@@ -15,10 +15,8 @@ async def check(client, message):
             await message.channel.send("You need to have your DMs open to receive the command list")
             return
         await dm.send(texts.h_1)
-
-        if message.guild.id not in privatedata.blacklist:
-            await dm.send(texts.h_2)
-            await dm.send(texts.h_3)
+        await dm.send(texts.h_2)
+        await dm.send(texts.h_3)
 
         await message.add_reaction('\U0001F44D')
 
