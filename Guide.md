@@ -102,7 +102,19 @@ The command to change is
 
 ...
 
-        
+## Matchmaking mechanic
+
+This mechanic is a continuation of the mechanic above, but simpler to use and to set up.
+
+In order to use it, you simply have to type the following command:
+
+```$matchmaking```
+
+in order to join the roster. If you, at any point, want to leave, simply run the command again.
+
+Once the match lobby fill up (current player limit is 5), a 30s countdown will initiate, and after
+that's over, all players in the lobby will be pinged. This is still a WIP, so other things such as 
+lobby host, custom player count, premature starts and other cool things will still be added in the future.
         
 
 ## Calculator mechanics
@@ -758,3 +770,7 @@ Added a few data handling commands
 Fixed some bugs
 
 Overall cleanup of the code
+
+Added basic matchmaking system
+
+### First public release
