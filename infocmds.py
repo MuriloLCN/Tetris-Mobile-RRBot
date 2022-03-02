@@ -1,5 +1,7 @@
-import texts
+import discord.errors
+
 import privatedata
+import texts
 
 
 async def check(client, message):
@@ -9,12 +11,12 @@ async def check(client, message):
         usuario = await client.fetch_user(message.author.id)
         try:
             dm = await usuario.create_dm()
-        except:
+        except (discord.errors.NotFound, discord.errors.Forbidden, Exception):
             await message.channel.send("You need to have your DMs open to receive the command list")
             return
         await dm.send(texts.h_1)
 
-        if message.guild.id in privatedata.fullAccessServers:
+        if message.guild.id not in privatedata.blacklist:
             await dm.send(texts.h_2)
             await dm.send(texts.h_3)
 

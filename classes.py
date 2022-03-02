@@ -3,7 +3,6 @@ import datetime
 # Main data object with semi-persistent data
 
 
-
 class ServerData:
     def __init__(self):
         self.id = ''
@@ -52,6 +51,30 @@ class Parameters:
         self.backtoback = btb
 
 
+# Class to organize matchmaking
+class Match:
+    def __init__(self):
+        self.players = dict()  # {playerID: [channelID, playerName]}
+        self.playerlimit = 5
+        self.messageids = dict()  # {channelID: messageID}
+
+    def reset(self):
+        self.players = dict()
+        self.playerlimit = 5
+        self.messageids = dict()
+
+    def getPlayerList(self):
+        text = ''
+        for player in self.players.keys():
+            text = text + str(self.players[player][1]) + '\n'
+        return text
+
+    def getMessageContent(self):
+        return "Matchmaking status\n" \
+               "Players connected: {}/{}\n" \
+               "Player list: \n{}".format(len(self.players.keys()), self.playerlimit, self.getPlayerList())
+
+
 lookout = [Custom, Cache, Parameters]
 
 
@@ -74,5 +97,3 @@ def updateObject(oldObject):
     newObject = ServerData()  # Blank object
 
     return recursiveInwardsCheck(oldObject, newObject)
-
-

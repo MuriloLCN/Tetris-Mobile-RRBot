@@ -1,33 +1,33 @@
 import aiohttp.client_exceptions
 import discord
-import asyncio
-import matplotlib.pyplot as plt  # Needs to be imported here otherwise one of it's dependencies break
 
+import bonuspinging
 import calculators
 import classes
 import dailyreminder
+import datahandling
 import dataupdate
+import graphs
 import infocmds
+import privatedata
+import rolechanger
+import rolegiving
 import rotation
 import savingtetris
-import bonuspinging
-import rolegiving
-import graphs
-
-import privatedata
-import datahandling
 import timer
-import rolechanger
+import matchmaking
 
 intent = discord.Intents().all()
 
-fullAccessServers = privatedata.fullAccessServers
-whitelist = privatedata.whitelist
+blacklist = privatedata.blacklist
 myid = privatedata.myid
 alarmbotid = privatedata.alarmbotid
+token = privatedata.token
+devtoken = privatedata.devtoken  # Token used for extensive testing
 
 data = datahandling.loadDict()
 
+matches = classes.Match()
 
 client = discord.Client(intents=intent)
 
@@ -44,6 +44,7 @@ async def on_ready():
 @client.event
 async def on_message(message):
     global data
+    global matches
 
     if str(message.channel.type) == 'private' and message.author != client.user and message.content.startswith('$'):
         # Commands need server data to be loaded, so cannot be used in DMs
@@ -55,9 +56,7 @@ async def on_message(message):
         dm = await usuario.create_dm()
         await dm.send(str(message.author) + ': ' + str(message.content))
 
-    # Only loads data if the message is a command
-
-    # Se a mensagem não começar com
+    # Only moves forward if the message is relevant to the bot
     if not message.content.startswith('$'):
         if not message.author.id == alarmbotid:
             return
@@ -102,8 +101,8 @@ async def on_message(message):
 
     await calculators.check(message, serverData)
 
-    # Trusted server features
-    if message.guild.id in fullAccessServers:
+    # Usually it's better to turn this into a guard clause but keeping it indented helps me to see which one's which
+    if message.guild.id not in blacklist:
 
         await rotation.check(message, serverData, data)
 
@@ -117,6 +116,8 @@ async def on_message(message):
 
         await graphs.check(message, serverData, data)
 
+        await matchmaking.check(message, matches, client)
+
 
 @client.event
 async def on_raw_reaction_add(payload):
@@ -125,7 +126,7 @@ async def on_raw_reaction_add(payload):
 
 
 try:
-    client.run(MY_TOKEN)
+    client.run(token)
 except (aiohttp.client_exceptions.ClientConnectorError, Exception):
     print('Could not connect to Discord API')
     # Had to put this here because every time there was a connection error my token

@@ -1,6 +1,9 @@
-import datahandling
 import re
+
 import discord
+
+import datahandling
+
 
 # Triggers every time a reaction is added
 async def check(client, payload, data):

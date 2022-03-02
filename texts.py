@@ -40,7 +40,8 @@ modes = "```Here's a list of all the gamemodes that are/were in the game\n\n"\
         "  Lotta Llama (season 12)\n" \
         "  Wacky Wobbler (season 13|1)\n" \
         "  Year of the tiger (season 14|2)\n" \
-        "  Full Moon (season 14|2)\n"\
+        "  Full Moon (season 14|2)\n" \
+        "  Wild (season 15|3)\n"\
         "```"
 
 seasons = "```Here's a list of recorded seasons for now\n\n"\
@@ -57,7 +58,8 @@ seasons = "```Here's a list of recorded seasons for now\n\n"\
           "[11] Adventure Season\n" \
           "[12] Winter Season\n" \
           "[13|1] Monters Season\n" \
-          "[14|2] Love Quest Season\n"\
+          "[14|2] Love Quest Season\n" \
+          "[15|3] Space Fantasy Season\n"\
           "```"
 
 guides = ""\
@@ -119,6 +121,7 @@ h_1 = "```Tetris Mobile RRBot command list\n\n" \
       "$createtimer <time in minutes>\n" \
       "OR\n" \
       "$createtimer &<timezone> &<hour>:<minute>\n\n" \
+      "$matchmaking\n" \
       "> Information commands\n" \
       "$tasks | Task cycle\n" \
       "$bonus | Bonus system\n" \

@@ -1,8 +1,10 @@
-import classes
-import texts
-import math
 import datetime
+import math
+
+import classes
 import privatedata
+import texts
+
 
 # Raw calculation commands
 def getDays(day, month, year):
@@ -75,7 +77,7 @@ async def check(message, serverData):
         await message.channel.send("Your PPS is around " + str(pps) + "PPS.")
         return
 
-    if message.guild.id in privatedata.fullAccessServers:
+    if message.guild.id not in privatedata.blacklist:
 
         # Amount played per day based on profile data
         if message.content.startswith('$calculateaverage'):

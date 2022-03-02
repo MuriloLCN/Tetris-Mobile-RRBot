@@ -1,5 +1,5 @@
-import texts
 import datahandling
+import texts
 
 
 # Compares two queues to see if there are matching interests

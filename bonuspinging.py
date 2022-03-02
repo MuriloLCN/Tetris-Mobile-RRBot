@@ -1,5 +1,5 @@
-import texts
 import datahandling
+import texts
 
 
 async def check(message, serverData, data):

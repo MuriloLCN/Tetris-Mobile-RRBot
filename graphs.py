@@ -289,7 +289,6 @@ async def check(message, serverData, data):
             deg_arr = np.array(deg_arr)
             label_loc = np.array(label_loc)
 
-
             # plt.figure(figsize=(8, 8))
             plt.subplot(polar=True)
             # plt.plot(label_loc, referencePlayer, label='Reference Player')
@@ -304,7 +303,12 @@ async def check(message, serverData, data):
                 playerdata = [*playerdata, playerdata[0]]
                 plt.plot(label_loc, playerdata, label=usernames[i])
 
-            #lines, labels = plt.thetagrids(np.degrees(label_loc), labels=categories)
+            # lines, labels = plt.thetagrids(np.degrees(label_loc), labels=categories)
+
+            # It says that they're not used but they are needed for the graph to be made.
+            # They have to be manually cleaned up because for some reason leaving them
+            # eats up RAM like it's a Christmas supper
+
             lines, labels = plt.thetagrids(deg_arr, labels=categories)
             plt.legend()
             plt.savefig('temp.png')

@@ -79,7 +79,7 @@ async def check(message, serverData, data):
             await message.channel.send("You do not have permission to use this command")
         return
 
-    if message.guild.id in privatedata.fullAccessServers:
+    if message.guild.id not in privatedata.blacklist:
         # Changes 'referencepps', used in calculations
         if message.content.startswith('$setreferencepps'):
             try:
@@ -339,7 +339,7 @@ async def check(message, serverData, data):
 
             try:
                 point = serverData.storedpoints[name]
-            except (AttributeError, Exception) as e:
+            except (AttributeError, Exception):
                 await message.channel.send("Point with named {} not found, to see list of stored points use "
                                            "$listpoints".format(name))
                 return
