@@ -1,0 +1,19 @@
+Here's a quick roadmap of the things I plan to do in the future + some things to keep in mind
+
+My todo list:
+1. I want to add much more functionality to the matchmaking system, with things like custom rooms, premature starts, custom timers, custom player limits,
+etc. 
+2. I want to make every server have it's separate file for data, in a separate folder. This is not much of a big deal because for now the dataset file is
+small, but I imagine that if it were big, loading all of it every time a commands is used could be really bad.
+3. I really want to remake the radar chart. There's a memory leak there somewhere and I couldn't get it fixed 100% yet, just made it far less
+severe for now.
+4. I want to find a way to make for more interactive things with users, things and commands feel really static as of right now.
+5. Some minor changes to things like timers and reminders.
+
+But I won't get around to doing those things just yet. My worries are related to longevity of the Tetris Mobile game itself, most players have left the game
+already due to the lack of replayability or new things, and I'm unsure how the new studios (PLAYSTUDIOS) that bought the rights to Tetris Mobile will do
+with the game. I imagine that by the time they replace the current app with the new one they say they're making, many of the features in the bot will become
+obsolete and will have to be removed. And if they remove the teams entirely, that's the bot gone. I don't want to spend too much time into something that
+could end up getting shot down immediately, so I'll wait for their actions.
+
+-PyrooKil
