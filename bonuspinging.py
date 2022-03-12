@@ -1,50 +1,107 @@
+import gc
+
+import discord
+
+import classes
 import datahandling
 import texts
 
 
-async def check(message, serverData, data):
+async def fullBonusPingCMD(message: discord.Message):
+    """
+    Sends the help text for the bonus pinging mechanic
 
+    Discord command:
+    $fullbonusping
+
+    :param message: Message context
+    """
+    await message.channel.send(texts.fullbonusping)
+
+
+async def dailiesDoneCMD(message: discord.Message, serverData: classes.ServerData, data: dict):
+    """
+    Does the necessary checks when a player has done their daily tasks
+    Adds/Removes them from serverData.cached.donedailies
+    Silences/Desilences their daily alarm, if they have one
+
+    Discord command:
+    $dailiesdone
+
+    :param message: Message context
+    :param serverData: Server data
+    :param data: Loaded data
+    """
+    name = str(message.author.id)
+
+    if name in serverData.cached.donedailies:
+        serverData.cached.donedailies.remove(name)
+        await message.add_reaction('\U00002B55')
+
+        # Reactivate the alarm
+        if str(name) in serverData.alarms.keys():
+            if serverData.alarms[str(name)][1]:
+                serverData.alarms[str(name)][1] = False
+
+    else:
+        serverData.cached.donedailies.append(name)
+
+        await message.add_reaction('\U0001F44D')
+
+        # Deactivate the alarm
+        if str(name) in serverData.alarms.keys():
+            if not serverData.alarms[str(name)][1]:
+                serverData.alarms[str(name)][1] = True
+
+    datahandling.writeserverdata(message.guild.id, serverData, data)
+
+    del name, serverData, data, message
+    gc.collect()
+
+
+async def gotFullBonusCMD(message: discord.Message, serverData: classes.ServerData, data: dict):
+    """
+    Signals every player that has done their daily tasks that the team has achieved full bonus
+
+    :param message: Message context
+    :param serverData: Server data
+    :param data: Loaded data
+    """
+    myString = ''
+
+    for name in serverData.cached.donedailies:
+        myString += "<@" + str(name) + ">, "
+
+    await message.channel.send("Team now has full bonus, let's get that bread! " + myString)
+    serverData.cached.donedailies.clear()
+
+    datahandling.writeserverdata(message.guild.id, serverData, data)
+    del myString, serverData, data, message
+    gc.collect()
+    return
+
+
+async def check(message: discord.Message, serverData: classes.ServerData, data: dict):
+    """
+    Main check function
+
+    Discord commands:
+    $fullbonusping
+    $dailiesdone
+    $gotfullbonus
+
+    :param message: Message context
+    :param serverData: Server data
+    :param data: Loaded data
+    """
     # Help command
     if message.content.startswith('$fullbonusping'):
-        await message.channel.send(texts.fullbonusping)
-        return
+        await fullBonusPingCMD(message)
 
     # Add/Remove name from list
     if message.content.startswith('$dailiesdone'):
-        name = str(message.author.id)
-
-        if name in serverData.cached.donedailies:
-            serverData.cached.donedailies.remove(name)
-            await message.add_reaction('\U00002B55')
-
-            # Reactivate the alarm
-            if str(name) in serverData.alarms.keys():
-                if serverData.alarms[str(name)][1]:
-                    serverData.alarms[str(name)][1] = False
-
-        else:
-            serverData.cached.donedailies.append(name)
-
-            await message.add_reaction('\U0001F44D')
-
-            # Deactivate the alarm
-            if str(name) in serverData.alarms.keys():
-                if not serverData.alarms[str(name)][1]:
-                    serverData.alarms[str(name)][1] = True
-
-        datahandling.writeserverdata(message.guild.id, serverData, data)
-
-        return
+        await dailiesDoneCMD(message, serverData, data)
 
     # Pinging command
     if message.content.startswith('$gotfullbonus'):
-        myString = ''
-
-        for name in serverData.cached.donedailies:
-            myString += "<@" + str(name) + ">, "
-
-        await message.channel.send("Team now has full bonus, let's get that bread! " + myString)
-        serverData.cached.donedailies.clear()
-
-        datahandling.writeserverdata(message.guild.id, serverData, data)
-        return
+        await gotFullBonusCMD(message, serverData, data)

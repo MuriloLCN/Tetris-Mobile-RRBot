@@ -4,9 +4,40 @@ import privatedata
 import texts
 
 
-async def check(client, message):
+async def requestVerify(client: discord.Client, message: discord.Message):
+    """
+    Sends a verification request via DMs for a given server. Only verified servers have full access to commands.
 
-    # Self explanatory, simply sends a help message
+    :param client: Client context
+    :param message: Message context
+    """
+    usuario = await client.fetch_user(privatedata.myid)
+    dm = await usuario.create_dm()
+
+    # There are no servers in the blacklist currently, this is just to make sure that if someone decides to spam me
+    # I can filter the notifications.
+    if message.guild.id in privatedata.blacklist:
+        return
+
+    await message.channel.send("Request sent, you should get contacted soon")
+    await dm.send('Request for verification coming through:\n'
+                  'User: ' + str(message.author) +
+                  ' (' + str(message.author.id) + ')' +
+                  '\nServer: ' + str(message.guild) +
+                  ' (' + str(message.guild.id) + ')')
+    return
+
+
+async def check(client, message):
+    """
+    Main check function
+
+    :param client: Client context
+    :param message: Message context
+    """
+
+    # Note: Most of there are self explanatory so extensive details are not necessary
+
     if message.content.startswith('$?'):
         usuario = await client.fetch_user(message.author.id)
         try:
@@ -52,22 +83,5 @@ async def check(client, message):
                                    "shorturl.at/bcejC")
         return
 
-    # Simply makes the bot send a DM to me (PyrooKil) as to manually add a new server to the verified list.
-    # It looks like gatekeeping at first but having that helpline of comms really help to keep any malicious intent at
-    # bay. Users can be trolls sometimes...
     if message.content.startswith('$requestverify'):
-        usuario = await client.fetch_user(privatedata.myid)
-        dm = await usuario.create_dm()
-
-        # There are no servers in the blacklist currently, this is just to make sure that if someone decides to spam me
-        # I can filter the notifications.
-        if message.guild.id in privatedata.blacklist:
-            return
-
-        await message.channel.send("Request sent, you should get contacted soon")
-        await dm.send('Request for verification coming through:\n'
-                      'User: ' + str(message.author) +
-                      ' (' + str(message.author.id) + ')' +
-                      '\nServer: ' + str(message.guild) +
-                      ' (' + str(message.guild.id) + ')')
-        return
+        await requestVerify(client, message)

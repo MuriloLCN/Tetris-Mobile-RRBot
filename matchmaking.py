@@ -4,17 +4,26 @@ from copy import deepcopy
 import asyncio
 import gc
 
+import classes
+
 # TODO List
 '''
 Add custom timer
 Add custom player limit
 Add premature start
 Add more control over matchmaking
-Add host (first player in queue)
-And more...
+Etc
 '''
 
-async def updateMessage(message, matches, client):
+
+async def updateMessage(message: discord.Message, matches: classes.Match, client: discord.Client):
+    """
+    Updates all messages for players that are awaiting in the matchmaking lobby when things change (player joined, left,
+    etc)
+    :param message: Message context
+    :param matches: Match object
+    :param client: Client context
+    """
     for i in matches.players.keys():
         try:
             channel = await client.fetch_channel(matches.players[i][0])
@@ -37,7 +46,13 @@ async def updateMessage(message, matches, client):
                 pass
 
 
-async def startMatch(matches, client):
+async def startMatch(matches: classes.Match, client: discord.Client):
+    """
+    Starts the match countdown and pinging
+
+    :param matches: Match object
+    :param client: Client context
+    """
     for key in matches.players.keys():
         try:
             channel = await client.fetch_channel(matches.players[key][0])
@@ -66,6 +81,13 @@ async def startMatch(matches, client):
 
 
 async def check(message, matches, client):
+    """
+    Main check function
+
+    :param message: Message context
+    :param matches: Match object
+    :param client: Client context
+    """
     userdata = {message.author.id: [message.channel.id, str(message.author.name)]}
 
     if message.content.startswith('$matchmaking'):

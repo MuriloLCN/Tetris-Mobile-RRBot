@@ -1,9 +1,20 @@
 import asyncio
 import datetime
+import gc
 import math
 
+import discord
 
-async def datetimeCountdown(message, serverData):
+import classes
+
+
+async def datetimeCountdown(message: discord.Message, serverData: classes.ServerData):
+    """
+    Creates a timer based on GMT timezone and target time passed in
+
+    :param message: Message context
+    :param serverData: Server data
+    """
     content = str(message.content)
 
     try:
@@ -52,7 +63,13 @@ async def datetimeCountdown(message, serverData):
     await message.channel.send("{}, join now!".format(serverData.proprieties.currentrole))
 
 
-async def normalCountdown(message, serverData):
+async def normalCountdown(message: discord.Message, serverData: classes.ServerData):
+    """
+    Creates a timer relative to the current time based on the minutes amount passed in
+
+    :param message: Message context
+    :param serverData: Server data
+    """
     content = str(message.content)
     try:
         minutes = str(content).split(' ')[1]
@@ -77,20 +94,44 @@ async def normalCountdown(message, serverData):
     await message.channel.send("{}, join now!".format(serverData.proprieties.currentrole))
 
 
+async def createTimer(message: discord.Message, serverData: classes.ServerData):
+    """
+    Creates a countdown timer to join Royale matches at the same time with other people
+
+    Discord command:
+    $createtimer (minutes) | $createtimer &(timezone) &(hours):(minutes)
+
+    :param message: Message context
+    :param serverData: Server data
+    """
+    myContent = str(message.content).split('&')
+
+    if len(myContent) == 3:
+        await datetimeCountdown(message, serverData)
+    elif len(myContent) == 1:
+        if len(str(message.content).split(' ')) >= 3:
+            await message.channel.send("It looks like you were trying to use the GMT form without delimiters or "
+                                       "had an extra space, please double check to make sure you've used the "
+                                       "correct timer")
+            return
+        await normalCountdown(message, serverData)
+    else:
+        await message.channel.send("Incorrect syntax, use '$?' for help")
+
+    del myContent, serverData, message
+    gc.collect()
+    return
+
+
 async def check(message, serverData):
-    # Creates timer. Can be used with both GMT parameters for a specific time or a simple minute countdown for relative
-    # time
+    """
+    Main check function
+
+    Discord commands:
+    $createtimer
+
+    :param message: Message context
+    :param serverData: Server data
+    """
     if message.content.startswith('$createtimer'):
-
-        myContent = str(message.content).split('&')
-
-        if len(myContent) == 3:
-            await datetimeCountdown(message, serverData)
-        elif len(myContent) == 1:
-            if len(str(message.content).split(' ')) >= 3:
-                await message.channel.send("It looks like you were trying to use the GMT form without delimiters or "
-                                           "had an extra space, please double check to make sure you've used the "
-                                           "correct timer")
-            await normalCountdown(message, serverData)
-        else:
-            await message.channel.send("Incorrect syntax, use '$?' for help")
+        await createTimer(message, serverData)

@@ -1,3 +1,4 @@
+import gc
 import re
 
 import discord
@@ -5,8 +6,15 @@ import discord
 import datahandling
 
 
-# Triggers every time a reaction is added
 async def check(client, payload, data):
+    """
+    Triggers every time a reaction is added. Checks if the message is designated for changing roles and does so
+    accordingly.
+
+    :param client: Client context
+    :param payload: Payload context
+    :param data: Loaded data
+    """
     channel = await client.fetch_channel(payload.channel_id)
     message = await channel.fetch_message(payload.message_id)
 
@@ -80,6 +88,9 @@ async def check(client, payload, data):
                 continue
             except AttributeError:
                 continue
+
+        del channel, message, user, reaction, curId, serverData, rows, removeRoles, isOption, role, data, message
+        gc.collect()
 
     else:
         await message.channel.send("No roles found for that changer")

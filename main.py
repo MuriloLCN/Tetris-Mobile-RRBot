@@ -1,5 +1,8 @@
+import gc
+
 import aiohttp.client_exceptions
 import discord
+import asyncio
 
 import bonuspinging
 import calculators
@@ -16,6 +19,7 @@ import rotation
 import savingtetris
 import timer
 import matchmaking
+import performancetests
 
 intent = discord.Intents().all()
 
@@ -25,25 +29,27 @@ alarmbotid = privatedata.alarmbotid
 token = privatedata.token
 devtoken = privatedata.devtoken  # Token used for extensive testing
 
-data = datahandling.loadDict()
-
 matches = classes.Match()
 
 client = discord.Client(intents=intent)
 
-for key in data.keys():
-    data[key] = classes.updateObject(data[key])
-
 
 @client.event
 async def on_ready():
+    """
+    Event handler for initialization of the bot
+    """
     print('Bot connected as {0.user}'.format(client))
     await client.change_presence(activity=discord.Game(name="$? for help"))
 
 
 @client.event
 async def on_message(message):
-    global data
+    """
+    Event handler for Discord messages
+
+    :param message: Message context
+    """
     global matches
 
     if str(message.channel.type) == 'private' and message.author != client.user and message.content.startswith('$'):
@@ -55,6 +61,8 @@ async def on_message(message):
         usuario = await client.fetch_user(myid)
         dm = await usuario.create_dm()
         await dm.send(str(message.author) + ': ' + str(message.content))
+        del usuario, dm
+        return
 
     # Only moves forward if the message is relevant to the bot
     if not message.content.startswith('$'):
@@ -62,6 +70,11 @@ async def on_message(message):
             return
 
     # Loads data
+    data = datahandling.loadDict()
+
+    for key in data.keys():
+        data[key] = classes.updateObject(data[key])
+
     try:
         curId = message.guild.id
         serverData = datahandling.getserverdata(curId, data)
@@ -72,9 +85,6 @@ async def on_message(message):
         return
 
     # Gets the AlarmBot message and updates pending alarm ID
-    # JUST A PLACEHOLDER! NOT FINAL!!
-    # This is not perfect because it depends on humans to create the alarms, and if they don't do them in order,
-    # they'll get jumbled (this is because Alarmbot cannot read other bots' messages)
     if message.author.id == alarmbotid:
         if message.embeds:
             try:
@@ -85,6 +95,8 @@ async def on_message(message):
                         serverData.alarms[entry][0] = gotId
                         break
                 datahandling.writeserverdata(message.guild.id, serverData, data)
+                del stringy, gotId
+                return
             except (IndexError, ValueError):
                 return
 
@@ -103,7 +115,7 @@ async def on_message(message):
 
     await matchmaking.check(message, matches, client)
 
-    # Usually it's better to turn this into a guard clause but keeping it indented helps me to see which one's which
+    # Usually it's better to turn this into a guard clause but keeping it indented helps to see which one's which
     if message.guild.id in privatedata.fullAccessServers:
 
         await rotation.check(message, serverData, data)
@@ -116,14 +128,31 @@ async def on_message(message):
 
         await rolegiving.check(client, message, serverData, data)
 
-        await graphs.check(message, serverData, data)
+        #await graphs.check(message, serverData, data)
+        # Keeping this here until memory leak gets better
+        asyncio.get_event_loop().create_task(graphs.check(message, serverData, data))
+
+        await performancetests.check(message, serverData, data, client, matches)
+
+    del curId, data, key, message, serverData
+    gc.collect()
 
 
 @client.event
 async def on_raw_reaction_add(payload):
+    """
+    Event handler for reaction addition on Discord messages
+    :param payload: Payload context
+    """
+    data = datahandling.loadDict()
+
+    for key in data.keys():
+        data[key] = classes.updateObject(data[key])
 
     await rolechanger.check(client, payload, data)
 
+    del data, key, payload
+    gc.collect()
 
 try:
     client.run(token)
