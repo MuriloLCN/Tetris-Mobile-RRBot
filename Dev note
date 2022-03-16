@@ -3,7 +3,7 @@ Here's a quick roadmap of the things I plan to do in the future + some things to
 My todo list:
 1. I want to add much more functionality to the matchmaking system, with things like custom rooms, premature starts, custom timers, custom player limits,
 etc. 
-2. I want to make every server have it's separate file for data, in a separate folder. This is not much of a big deal because for now the dataset file is
+2. I want to make every server have it's separate file for data, in a separate folder for all the server's data. This is not much of a big deal because for now the dataset file is
 small, but I imagine that if it were big, loading all of it every time a commands is used could be really bad.
 3. I really want to remake the radar chart. There's a memory leak there somewhere and I couldn't get it fixed 100% yet, just made it far less
 severe for now.
