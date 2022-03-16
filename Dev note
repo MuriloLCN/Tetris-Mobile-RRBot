@@ -8,7 +8,9 @@ small, but I imagine that if it were big, loading all of it every time a command
 3. I really want to remake the radar chart. There's a memory leak there somewhere and I couldn't get it fixed 100% yet, just made it far less
 severe for now.
 4. I want to find a way to make for more interactive things with users, things and commands feel really static as of right now.
-5. Some minor changes to things like timers and reminders.
+5. I really want to make my own version of daily alarms and make it not dependent on AlarmBot anymore. I feel that this would remove a lot of unnecessary complications
+and complexity from the codebase and from the daily reminder system, all while making it more reliable, less error-prone and faster.
+6. Some minor changes to things like timers and reminders.
 
 But I won't get around to doing those things just yet. My worries are related to longevity of the Tetris Mobile game itself, most players have left the game
 already due to the lack of replayability or new things, and I'm unsure how the new studios (PLAYSTUDIOS) that bought the rights to Tetris Mobile will do
