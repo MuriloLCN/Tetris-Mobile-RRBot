@@ -11,6 +11,7 @@ import dailyreminder
 import datahandling
 import dataupdate
 import graphs
+import helpcommand
 import infocmds
 import privatedata
 import rolechanger
@@ -20,6 +21,7 @@ import savingtetris
 import timer
 import matchmaking
 import performancetests
+import clock
 
 intent = discord.Intents().all()
 
@@ -41,6 +43,7 @@ async def on_ready():
     """
     print('Bot connected as {0.user}'.format(client))
     await client.change_presence(activity=discord.Game(name="$? for help"))
+    await clock.clockLoop(client)
 
 
 @client.event
@@ -105,6 +108,8 @@ async def on_message(message):
         # Just want to keep this here in case I need to do something using it's own messages in the future
 
     # Common commands
+    await helpcommand.check(message, serverData, data)
+
     await timer.check(message, serverData)
 
     await infocmds.check(client, message)
@@ -115,10 +120,12 @@ async def on_message(message):
 
     await matchmaking.check(message, matches, client)
 
+    await rolegiving.check(client, message, serverData, data)
+
     # Usually it's better to turn this into a guard clause but keeping it indented helps to see which one's which
     if message.guild.id in privatedata.fullAccessServers:
 
-        await rotation.check(message, serverData, data)
+        await rotation.check(message, serverData, data, client)
 
         await savingtetris.check(message, serverData, data)
 
@@ -126,13 +133,13 @@ async def on_message(message):
 
         await dailyreminder.check(client, message, serverData, data)
 
-        await rolegiving.check(client, message, serverData, data)
-
         #await graphs.check(message, serverData, data)
         # Keeping this here until memory leak gets better
         asyncio.get_event_loop().create_task(graphs.check(message, serverData, data))
 
         await performancetests.check(message, serverData, data, client, matches)
+
+        await clock.check(message)
 
     del curId, data, key, message, serverData
     gc.collect()
@@ -150,6 +157,8 @@ async def on_raw_reaction_add(payload):
         data[key] = classes.updateObject(data[key])
 
     await rolechanger.check(client, payload, data)
+
+    await helpcommand.reaction_check(client, payload, data)
 
     del data, key, payload
     gc.collect()

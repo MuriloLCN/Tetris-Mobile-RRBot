@@ -13,6 +13,7 @@ class ServerData:
         self.cached = Cache()
         self.proprieties = Custom()
         self.rolechangerids = []
+        self.rotationvisualizerids = dict()
         self.storedpoints = dict()  # {name: Parameters(data)}
 
 
@@ -26,6 +27,7 @@ class Cache:
         self.exitqueue = []
         self.donedailies = []
         self.savedtetrises = []
+        self.helpmessageids = []
         self.rolepairs = dict()  # {role: reaction}
         self.datapoints = dict()  # {name: Parameters()}
 

@@ -28,30 +28,13 @@ async def requestVerify(client: discord.Client, message: discord.Message):
     return
 
 
-async def check(client, message):
+async def check(client: discord.Client, message: discord.Message):
     """
     Main check function
 
     :param client: Client context
     :param message: Message context
     """
-
-    # Note: Most of there are self explanatory so extensive details are not necessary
-
-    if message.content.startswith('$?'):
-        usuario = await client.fetch_user(message.author.id)
-        try:
-            dm = await usuario.create_dm()
-        except (discord.errors.NotFound, discord.errors.Forbidden, Exception):
-            await message.channel.send("You need to have your DMs open to receive the command list")
-            return
-        await dm.send(texts.h_1)
-        await dm.send(texts.h_2)
-        await dm.send(texts.h_3)
-
-        await message.add_reaction('\U0001F44D')
-
-        return
 
     if message.content.startswith('$tasks'):
         await message.channel.send(texts.tasks)

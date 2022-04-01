@@ -7,6 +7,52 @@ import datahandling
 import texts
 
 
+async def getVisualizerText(serverData: classes.ServerData, client: discord.Client):
+    """
+    Returns a string with the names of everyone waiting in the entry and exit queues.
+
+    :param serverData: Server data
+    :param client: Client context
+    """
+    enteringText = 'Waiting to enter:\n'
+    exitText = '\nWaiting to exit:\n'
+    for name in serverData.cached.entryqueue:
+        user = await client.fetch_user(name)
+        enteringText += str(user) + '\n'
+    for name in serverData.cached.exitqueue:
+        user = await client.fetch_user(name)
+        exitText += str(user) + '\n'
+
+    return "```" + enteringText + exitText + "```"
+
+
+async def updateVisualizers(serverData: classes.ServerData, data: dict, client: discord.Client, originalMessage: discord.Message):
+    """
+    Updates all visualizers. Deletes it from memory if unable to.
+
+    :param serverData: Server data
+    :param data: Loaded data dict
+    :param client: Client context
+    :param originalMessage: Original message context (used to get serverID)
+    """
+    text = await getVisualizerText(serverData, client)
+
+    for item in serverData.rotationvisualizerids.keys():
+        try:
+            channel = await client.fetch_channel(item)
+            message = await channel.fetch_message(serverData.rotationvisualizerids[item])
+        except (KeyError, discord.errors.NotFound, Exception):
+            serverData.rotationvisualizerids.pop(item)
+            datahandling.writeserverdata(originalMessage.guild.id, serverData, data)
+            return
+
+        try:
+            await message.edit(content=text)
+        except (KeyError, Exception):
+            serverData.rotationvisualizerids.pop(item)
+            datahandling.writeserverdata(originalMessage.guild.id, serverData, data)
+
+
 async def compareQueue(message: discord.Message, entering: bool, entryList: list, exitList: list, dataClass: classes.ServerData, data: dict):
     """
     Compares two queues to see if there are matching interests
@@ -40,7 +86,29 @@ async def compareQueue(message: discord.Message, entering: bool, entryList: list
     datahandling.writeserverdata(message.guild.id, dataClass, data)
 
 
-async def enter(message: discord.Message, serverData: classes.ServerData, data: dict):
+async def addVisualizer(message: discord.Message, serverData: classes.ServerData, data: dict, client: discord.Client):
+    """
+    Adds a visulizer to make the queues used for rotation visible so it's better for planning ahead.
+
+    :param message: Message context
+    :param serverData: Server data
+    :param data: Loaded data dict
+    :param client: Client context
+    """
+    visualizertext = await getVisualizerText(serverData, client)
+
+    newMessage = await message.channel.send(visualizertext)
+
+    appendable = {newMessage.channel.id: newMessage.id}
+
+    serverData.rotationvisualizerids.update(appendable)
+
+    await updateVisualizers(serverData, data, client, message)
+
+    datahandling.writeserverdata(message.guild.id, serverData, data)
+
+
+async def enter(message: discord.Message, serverData: classes.ServerData, data: dict, client: discord.Client):
     """
     Joins the entry queue
 
@@ -50,6 +118,7 @@ async def enter(message: discord.Message, serverData: classes.ServerData, data: 
     :param message: Message context
     :param serverData: Server data
     :param data: Loaded data
+    :param client: Client context
     """
     name = message.author.id
 
@@ -65,11 +134,12 @@ async def enter(message: discord.Message, serverData: classes.ServerData, data: 
 
         await compareQueue(message, True, serverData.cached.entryqueue, serverData.cached.exitqueue, serverData, data)
 
+    await updateVisualizers(serverData, data, client, message)
     del name, serverData, data, message
     gc.collect()
 
 
-async def leave(message: discord.Message, serverData: classes.ServerData, data: dict):
+async def leave(message: discord.Message, serverData: classes.ServerData, data: dict, client: discord.Client):
     """
     Joins the exit queue
 
@@ -79,6 +149,7 @@ async def leave(message: discord.Message, serverData: classes.ServerData, data: 
     :param message: Message context
     :param serverData: Server data
     :param data: Loaded data
+    :param client: Client context
     """
     name = message.author.id
 
@@ -93,11 +164,12 @@ async def leave(message: discord.Message, serverData: classes.ServerData, data: 
         await message.add_reaction('\U0001F44D')
         await compareQueue(message, False, serverData.cached.entryqueue, serverData.cached.exitqueue, serverData, data)
 
+    await updateVisualizers(serverData, data, client, message)
     del name, serverData, data, message
     gc.collect()
 
 
-async def freeSpot(message: discord.Message, data: dict):
+async def freeSpot(message: discord.Message, data: dict, client: discord.Client):
     """
     Mentions the next person in the entry queue that there is a free spot
 
@@ -106,6 +178,7 @@ async def freeSpot(message: discord.Message, data: dict):
 
     :param message: Message context
     :param data: Loaded data
+    :param client: Client context
     """
     serverData = datahandling.getserverdata(message.guild.id, data)
 
@@ -113,13 +186,14 @@ async def freeSpot(message: discord.Message, data: dict):
         name = str(serverData.cached.entryqueue[0])
         await message.channel.send("There's an open spot, <@" + name + ">, you can enter")
         serverData.cached.entryqueue.pop(0)
+        await updateVisualizers(serverData, data, client, message)
         datahandling.writeserverdata(message.guild.id, serverData, data)
 
     else:
         await message.channel.send("The entry queue is empty")
 
 
-async def check(message, serverData, data):
+async def check(message, serverData, data, client):
     """
     Main check command
 
@@ -132,6 +206,7 @@ async def check(message, serverData, data):
     :param message: Message context
     :param serverData: Server data
     :param data: Loaded data
+    :param client: Client context
     """
     # Help command
     if message.content.startswith('$rotation'):
@@ -139,10 +214,13 @@ async def check(message, serverData, data):
         return
 
     if message.content.startswith('$enter'):
-        await enter(message, serverData, data)
+        await enter(message, serverData, data, client)
 
     if message.content.startswith('$leave'):
-        await leave(message, serverData, data)
+        await leave(message, serverData, data, client)
 
     if message.content.startswith('$freespot'):
-        await freeSpot(message, data)
+        await freeSpot(message, data, client)
+
+    if message.content.startswith('$addvisualizer'):
+        await addVisualizer(message, serverData, data, client)

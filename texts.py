@@ -116,75 +116,179 @@ royalecalcaverage_exception_one = "Incorrect command, correct usage: "\
                                   " are integers. Also, day of the month is how long the"\
                                   " current season has been going for, since they start on day 1"
 
-h_1 = "```Tetris Mobile RRBot command list\n\n" \
-      "> Timer for royale\n" \
-      "$createtimer <time in minutes>\n" \
-      "OR\n" \
-      "$createtimer &<timezone> &<hour>:<minute>\n\n" \
-      "$matchmaking\n" \
-      "> Information commands\n" \
-      "$tasks | Task cycle\n" \
-      "$bonus | Bonus system\n" \
-      "$modes | All modes\n" \
-      "$seasons | All seasons\n" \
-      "$guides | Community guides\n" \
-      "$publisher | Info about the game publishers\n" \
-      "$fullguide | Complete help command\n\n" \
-      "> Calculator commands\n" \
-      "$ppscalculator <lines> | Calculate PPS (quick-play)\n\n" \
-      "> [ADMIN] Parameter customization commands\n" \
-      "$setrole <@role> | Role for the timers\n" \
-      "$setnewlimit <new limit in minutes> | Time limit for timers\n\n" \
-      "Most other commands can only be seen in verified servers, use '$requestverify' if not yet verified\n" \
-      "Note: Messages sent on my DMs are forwarded to humans. Beep boop.\n" \
-      "```" \
+# Timer system + matchmaking
+menu_help_one = "```(help page 1)\n" \
+                "Timer commands\n" \
+                "[Public]\n" \
+                "> $createtimer <time in minutes>\n" \
+                "or\n" \
+                "> $createtimer &<timezone> &<hour>:<minute>\n" \
+                "Creates a timer to a set amount of minutes from the current time or to a set time.\n" \
+                "Pings the designed role once the timer runs out\n\n" \
+                "Matchmaking commands [WIP]\n" \
+                "> $matchmaking\n" \
+                "Joins the matchmaking lobby. Once lobby is full every plyer is pinged to join royale lobby.\n" \
+                "```" \
+                ""
 
-h_2 = "```Verified server commands (only verified servers have access)\n\n" \
-      "> Rotation system\n" \
-      "$rotation | Help for rotation\n" \
-      "$enter | Join/leave EN queue\n" \
-      "$leave | Join/leave LE queue \n" \
-      "$freespot | Moves EN queue\n\n" \
-      "> Tetris notification\n" \
-      "$infotetris| Help for Tetris Notify\n" \
-      "$savedtetris | Flag for ping\n" \
-      "$tetristask | Ping flagged\n\n" \
-      "> Bonus notification\n" \
-      "$fullbonusping | Help for Bonus Notify\n" \
-      "$dailiesdone | Flag for ping\n" \
-      "$gotfullbonus | Ping flagged\n\n " \
-      "> Calculator commands\n" \
-      "$calculateaverage <total lines> <month>/<day>/<fullyear> | Simple calculator\n" \
-      "$royalecalcaverage <day of the month> <royale points> | Royale calculator\n" \
-      "$teamptscalculator <hours> <points> | Team calculator\n" \
-      "$compcalculator <day>/<month>/<year> <qp hs> <mt hs> <lines> <tetrises> <allclears> <tspins> " \
-      "<challenges> <streak> | Comparative calculator\n" \
-      "$diffcalculator <tetrises> <tspins> <b2bs> <lines> | Rate calculator\n\n" \
-      "> Daily reminder creation\n" \
-      "$createdailyreminder <timezone> <hour>:<minute> | Create alarm\n" \
-      "```"
+menu_help_two = "```(help page 2)\n" \
+                "Information commands\n" \
+                "[Public]\n" \
+                "> $tasks\n" \
+                "Lists the task cycle\n" \
+                "> $bonus\n" \
+                "Info for the team bonus mechanic\n" \
+                "> $modes\n" \
+                "List of all modes recorded\n" \
+                "> $seasons\n" \
+                "List of all seasons recorded\n" \
+                "> $guides\n" \
+                "List of some community-made guides for Tetris\n" \
+                "> $publisher\n" \
+                "Information about the game publisher\n" \
+                "> $fullguide\n" \
+                "Full in-depth guide for my commands\n" \
+                "[Verified only]" \
+                "> $rotation\n" \
+                "Help command for rotation system\n" \
+                "> $infotetris\n" \
+                "Help command for Tetris task pinging system\n" \
+                "> $fullbonusping\n" \
+                "Help command for Full bonus pinging system\n" \
+                "```"
 
-h_3 = "```" \
-      "> Admin commands\n" \
-      "$setreferencepps <pps>\n" \
-      "$printserverdata\n" \
-      "$resetserverdata\n" \
-      "$clearcache\n" \
-      "$addoption &<:reaction:> &<@role/option text>\n" \
-      "$addchanger <channelID>\n" \
-      "$addvote <channelID>\n" \
-      "$addpoint <name> <day>/<month>/<year> <qp hs> <mt hs> <lines> <tetrises> <allclears> <tspins> <challenges> <streak> <b2bs>\n" \
-      "$generategraphs\n" \
-      "$setbotchannel <#channel>\n" \
-      "$setreminderchannel <#channel>\n" \
-      "$updatereferencevalues <name> <day>/<month>/<year> <qp hs> <mt hs> <lines> <tetrises> <allclears> <tspins> <challenges> <streak> <b2bs>\n" \
-      "$forgetchangermessages\n" \
-      "$appendchangerid <messageID>\n" \
-      "$storepoint <name> <day>/<month>/<year> <qp hs> <mt hs> <lines> <tetrises> <allclears> <tspins> <challenges> <streak> <b2bs>\n" \
-      "$deletepoint <pointName>\n" \
-      "$loadpoint <pointName>\n" \
-      "$listpoints\n" \
-      "$clearpoints\n" \
-      "$printpoint <pointName>\n" \
-      "$loadallpoints\n" \
-      "```"
+menu_help_three = "```(help page 3)\n" \
+                  "Calculator commands\n" \
+                  "[Public]\n" \
+                  "> $ppscalculator <lines>" \
+                  "Calculates PPS (pieces per second) based on lines cleared in a single Quick Play game\n" \
+                  "[Verified only]\n" \
+                  "> $calculateaverage <total lines> <month>/<day>/<fullyear>\n" \
+                  "Calculates player averages based on profile data.\n" \
+                  "> $royalecalcaverage <day of the month> <royale points>\n" \
+                  "Calculates player averages based on royale season's data.\n" \
+                  "> $teamptscalculator <hours> <points>\n" \
+                  "Calculates average points per hour of a team.\n" \
+                  "> $compcalculator <day>/<month>/<year> <qp hs> <mt hs> <lines> <tetrises> <allclears> <tspins> " \
+                  "<challenges> <streak>\n" \
+                  "Calculates ACxTH scores based on server-defined reference values.\n" \
+                  ">$diffcalculator <tetrises> <tspins> <b2bs> <lines>\n" \
+                  "Calculates SP/Total, B2B/Total and B2B/SP clearance rates.\n" \
+                  "```" \
+                  ""
+
+menu_help_four = "```(help page 4)\n" \
+                 "Rotation system\n" \
+                 "[Verified only]\n" \
+                 "> $enter\n" \
+                 "Joins/exits the ENTER TEAM queue.\n" \
+                 "> $leave\n" \
+                 "Joins/exits the LEAVE TEAM queue.\n" \
+                 "> $freespot\n" \
+                 "Notifies the next person in the ENTER TEAM queue that there is a spot.\n" \
+                 "> $addvisualizer\n" \
+                 "Adds a visual list of the queue to the channel that gets updated with all names.\n" \
+                 "```"
+
+meun_help_five = "```(help page 5)\n" \
+                 "Notification systems\n" \
+                 "[Verified only]\n" \
+                 "> $savedtetris\n" \
+                 "Signals the bot you have stored Tetris line clears.\n" \
+                 "> $tetristask\n" \
+                 "Pings every player that has Tetris line clears stored.\n" \
+                 "> $dailiesdone\n" \
+                 "Signals the bot that you have done your daily tasks. Silences daily reminder, if you have one.\n" \
+                 "> $gotfullbonus\n" \
+                 "Pings every player that has done their daily tasks.\n" \
+                 "```" \
+                 ""
+
+menu_help_six = "```(help page 6)\n" \
+                "Daily reminder system\n" \
+                "> $createdailyreminder <timezone> <hours>:<minutes>\n" \
+                "Creates a recurring daily alarm to remind the daily tasks. Requires AlarmBot integration.\n" \
+                "> $reminder <hour>:<minute> <timezone> <#channel>\n" \
+                "Creates a recurring daily alarm to remind you to do dailty tasks. NOTE: You can use '123' for the " \
+                "channel to receive it in your DMs. Does not require any external bots to function. [New - in beta]\n" \
+                "```" \
+                ""
+
+menu_help_seven = "```(help page 7)\n" \
+                  "Role changer/vote system\n" \
+                  "[Admin only]\n" \
+                  ">> Important note: Custom emojis won't work <<\n" \
+                  "> $addoption &<:reaction:> &<@role/option text>\n" \
+                  "Stores an option for a text/role to be paired with a reaction.\n" \
+                  "> $addchanger <channelID>\n" \
+                  "Uses all stored options to make a message that users can use to change their roles.\n" \
+                  "> $addvote <channelID>\n" \
+                  "Uses all stored options to make a message in which users can vote.\n" \
+                  "```" \
+                  ""
+
+menu_help_eight = "```(help page 8)\n" \
+                  "Graph making system\n" \
+                  "[Verified only]\n" \
+                  "[Admin only]\n" \
+                  "> $addpoint <name> <day>/<month>/<year> <quickplay highscore> <marathon highscore> <lines>" \
+                  " <tetrises> <allclears> <tspins> <challenges> <login streak> <back-to-backs>\n" \
+                  "Loads a one-time-use point for graph making.\n" \
+                  "> $storepoint <name> <day>/<month>/<year> <quickplay highscore> <marathon highscore> <lines>" \
+                  " <tetrises> <allclears> <tspins> <challenges> <login streak> <back-to-backs>\n" \
+                  "Stores a multi-use point that can be loaded for graph making at any time.\n" \
+                  "> $deletepoint <pointName>\n" \
+                  "Deletes a specific stored point.\n" \
+                  "> $loadpoint <pointName>\n" \
+                  "Loads a stored point to be used in graph making.\n" \
+                  "> $listpoints\n" \
+                  "Lists all stored points.\n" \
+                  "> $clearpoints\n" \
+                  "Deletes all stored points\n" \
+                  "> $printpoint <pointName>\n" \
+                  "Prints data stored under a given point.\n" \
+                  "> $loadallpoints\n" \
+                  "Loads all points to be used in graph making.\n" \
+                  "> $generategraphs <any subset of 'ABCD'>\n" \
+                  "Generates the desired graphs. It can be 'A', 'AD', 'CBD', 'ABDC', etc." \
+                  "```" \
+                  ""
+
+menu_help_nine = "```(help page 9)\n" \
+                 "Administrator commands\n" \
+                  "[Public]\n" \
+                  "> $setrole <@role>\n" \
+                  "Sets the role to be pinged when timers run out.\n" \
+                  "> $setnewlimit <limit>\n" \
+                  "Changes the time limit (minutes) of how long a timer can be.\n" \
+                  "[Verified only]\n" \
+                  "> $setreferencepps <pps>\n" \
+                  "Changes the reference value for PPS used in calculations.\n" \
+                  "> $printserverdata\n" \
+                  "Prints server's data.\n" \
+                  "> $resetserverdata\n" \
+                  "Resets server's data to the default state.\n" \
+                  "> $clearcache\n" \
+                  "Clears server's cached info.\n" \
+                  "> $setbotchannel <#channel>\n" \
+                  "Sets the channel in which the Alarm System integration will occur. Gets floody.\n" \
+                  "> $setreminderchannel <#channel>\n" \
+                  "Sets the channel in which daily reminders will be sent in. Gets floody.\n" \
+                  "> $updatereferencevalues <name> <day>/<month>/<year> <quickplay highscore> <marathon highscore>" \
+                  " <lines> <tetrises> <allclears> <tspins> <challenges> <login streak> <back-to-backs>\n" \
+                  "Changes the reference values used in calculations for the server.\n" \
+                  "> $forgetchangermessages\n" \
+                  "Removes changer messages from memory so they no longer work.\n" \
+                  "> $appendchangerid <messageID>\n" \
+                  "Stores a message ID into the changer messages memory so it behaves as one.\n" \
+                  "```" \
+                  ""
+
+# TODO: Make $updatereferencevalues take in as an optional parameter a stored point
+
+# Admin commands
+# Notification systems + daily reminders
+# Role changers + votes
+# Graph generation
+#
+
