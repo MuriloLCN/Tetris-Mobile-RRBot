@@ -3,6 +3,7 @@ import datetime
 import math
 import dill
 import discord
+import privatedata
 
 
 def loadAlarms() -> dict:
@@ -47,7 +48,8 @@ def createReminder(alarmSet: dict, playerID: int, hour: int, minute: int, timezo
     :param timezone: Timezone in which the alarm is in
     :param desiredChannelID: Desired channel for mentioning
     """
-    entry = {playerID: [hour, minute, timezone, desiredChannelID]}
+    # Last item in array indicates whether the alarm is silenced or not. It's off by default.
+    entry = {playerID: [hour, minute, timezone, desiredChannelID, False]}
     alarmSet.update(entry)
     writeUpdatedAlarms(alarmSet)
 
@@ -68,7 +70,7 @@ def removeReminder(alarmSet: dict, playerID: int):
 '''
 stored -> dict
 {key: values}
-{playerID: [hour, minute, timezone, desiredChannelID]}
+{playerID: [hour, minute, timezone, desiredChannelID, isSilenced]}
 '''
 
 
@@ -189,11 +191,13 @@ async def clockLoop(client: discord.client):
         for key in allAlarms.keys():
             if currentHour == (allAlarms[key][0] - allAlarms[key][2]):
                 if currentMinute == allAlarms[key][1]:
-                    await sendMessage(key, allAlarms[key][3], client)
+                    if allAlarms[key][4]:
+                        allAlarms[key][4] = False
+                        writeUpdatedAlarms(allAlarms)
+                    else:
+                        await sendMessage(key, allAlarms[key][3], client)
 
         await asyncio.sleep(60)
-
-    pass
 
 
 async def check(message: discord.Message):
@@ -205,3 +209,9 @@ async def check(message: discord.Message):
 
     if message.content.startswith('$reminder'):
         await createNewTimer(message)
+
+    if message.content.startswith('$printalarms'):
+        # For debugging
+        if message.author.id in privatedata.whitelist:
+            p = loadAlarms()
+            await message.channel.send(str(p))

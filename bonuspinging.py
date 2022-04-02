@@ -6,6 +6,8 @@ import classes
 import datahandling
 import texts
 
+import clock
+
 
 async def fullBonusPingCMD(message: discord.Message):
     """
@@ -38,20 +40,38 @@ async def dailiesDoneCMD(message: discord.Message, serverData: classes.ServerDat
         serverData.cached.donedailies.remove(name)
         await message.add_reaction('\U00002B55')
 
-        # Reactivate the alarm
+        # Reactivate the alarm (old)
         if str(name) in serverData.alarms.keys():
             if serverData.alarms[str(name)][1]:
                 serverData.alarms[str(name)][1] = False
+
+        # Reactivate the alarm (new)
+        alarms = clock.loadAlarms()
+        if int(message.author.id) in alarms.keys():
+            try:
+                alarms[int(message.author.id)][4] = False
+                clock.writeUpdatedAlarms(alarms)
+            except IndexError:
+                pass
 
     else:
         serverData.cached.donedailies.append(name)
 
         await message.add_reaction('\U0001F44D')
 
-        # Deactivate the alarm
+        # Deactivate the alarm (old)
         if str(name) in serverData.alarms.keys():
             if not serverData.alarms[str(name)][1]:
                 serverData.alarms[str(name)][1] = True
+
+        # Deactivate the alarm (new)
+        alarms = clock.loadAlarms()
+        if int(message.author.id) in alarms.keys():
+            try:
+                alarms[int(message.author.id)][4] = True
+                clock.writeUpdatedAlarms(alarms)
+            except IndexError:
+                pass
 
     datahandling.writeserverdata(message.guild.id, serverData, data)
 
