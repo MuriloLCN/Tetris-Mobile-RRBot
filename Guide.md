@@ -1,3 +1,5 @@
+# Outdated file, check README.md for newer one
+
 # Tetris Mobile Royale Reminder Bot use guide
 
 You can add it to your server in this link https://discord.com/api/oauth2/authorize?client_id=867241160062009360&permissions=8&scope=bot
