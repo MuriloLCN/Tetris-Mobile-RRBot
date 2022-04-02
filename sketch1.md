@@ -32,9 +32,8 @@ Changelog
 #### 1.4.7 Graph making system
 ##### 1.4.7.1 Point system
 #### 1.4.8 Admin commands
-
-## 3. General design
-## 4. Changelog
+## 2. General design
+## 3. Changelog
 
 # 1. RRBot User Guide
 
@@ -331,6 +330,44 @@ Deletes the list of role-changing messages currently active in the server so the
 
 ```$updatereferencevalues <day>/<month>/<year> <quickplay highscore> <marathon highscore> <lines> <tetrises> <allclears> <tspins> <challenges> <login streak> <back-to-backs>```
 Changes the default parameters used in calculations to custom parameters.
+
+# 2. General design
+
+The general idea of the bot falls under this diagram.
+
+![sysdiag](https://user-images.githubusercontent.com/88753590/161403158-bfaef102-8424-4f4f-be9f-465c6299596f.png)
+
+Here's what each file does:
+
+```dataset.pkl```
+and
+```alarmset.pkl```
+are both used to store data and serve as sort of databases.
+```dataset.pkl``` stores a Python Dict containing the following:
+```{Server ID: Server Data}``` for each server, where Server Data is an instance of the class serverData defined in ```classes.py```
+```alarmset.pkl``` stores a Python Dict containing the following:
+```{player ID: [hour, minute, timezone, desired channel ID, isSilenced]}```, where only isSilenced is a Boolean while the rest are Integers. 
+
+```requirements.txt``` are the dependencies of the project.
+
+```infocmds.py```, ```savingtetris.py```, ```helpcommand.py```, ```matchmaking.py```, ```bonuspinging.py```, ```timer.py```, ```rolegiving.py```, ```rotation.py```,
+```graphs.py```, ```dataupdate.py``` and ```calculators.py``` are the command files. They are where the magic happens and can be seen as merely extensions of the
+```main.py``` file, as all of their context comes from there. It could all be done in one file but it's much better to keep separate systems in separate files for
+organization. 
+
+```datahandling.py``` and ```classes.py``` are very important files, as in them are defined functions and classes that are used throughout the code.
+```datahandling.py``` contains functions related to storing and retrieving server data from the files, and ```classes.py``` contains the base classes used as
+structure for the data throughout all files.
+
+```clock.py``` is an odd file, as it has it's own methods for file handling, commands and loop function (for the daily reminder system) in itself. It deals with
+things related to the function of the daily reminder system, and serves as a complete replacement of the need of AlarmBot to work.
+
+```main.py``` is the main file, and also the one that needs to run to start the bot. It imports all other files and is where the messages are first forwarded to.
+
+```performancetests.py``` is a quick set of tests for commands in terms of input sanitizing and performance. Originally added because of a memory leak, not very
+useful on most ocasions.
+
+Two files are used in the project but are not in the repository, as they store private data privately and locally.
  
 # Version Changelog
 
@@ -431,4 +468,18 @@ Overall cleanup of the code
 
 Added basic matchmaking system
 
-### First public release
+### -v11
+
+Reworked the help command
+
+Added visualizer to rotation system
+
+Removed commands: $seasons, $modes and $publisher
+
+Added new daily reminder system and removed old one
+
+AlarmBot no longer needed for the new system to work
+
+Rewrote many things
+
+Better documentation of the code
