@@ -1,12 +1,11 @@
 import datetime
 
-# Main data object with semi-persistent data
-
 
 class ServerData:
     """
     Main class for organizing data for a given server and storing semi-persistent things
     """
+
     def __init__(self):
         self.id = ''
         self.alarms = dict()  # {user: [id, silenced]}
@@ -17,11 +16,11 @@ class ServerData:
         self.storedpoints = dict()  # {name: Parameters(data)}
 
 
-# Subclass containing temporary data
 class Cache:
     """
     Minor class for organizing low-persistence data for a given server
     """
+
     def __init__(self):
         self.entryqueue = []
         self.exitqueue = []
@@ -32,26 +31,24 @@ class Cache:
         self.datapoints = dict()  # {name: Parameters()}
 
 
-# Subclass containing persistent server-defined data
 class Custom:
     """
     Minor class for organizing persistent data for a given server
     """
+
     def __init__(self):
         self.currentrole = '@exampleRole'
         self.currentlimit = 15
-        self.botchannel = 'bot_channel'
-        self.reminderchannel = 'reminder_channel'
         self.referencepps = 1.66
         # Default parameters passed in
         self.referenceparameters = Parameters(2021, 6, 15, 100000, 1000000, 75000, 10000, 50, 750, 1000, 100, 5000)
 
 
-# Class to organize parameters for calculations. Also used as subclass from Custom()
 class Parameters:
     """
-    Major class to organize data parameters used for many different things
+    Major class to organize data parameters, used for many different things
     """
+
     def __init__(self, y, m, d, qphs, mths, lines, tet, allc, tsd, chall, strk, btb):
         self.joindate = datetime.date(y, m, d)
         self.quickplayhs = qphs
@@ -65,11 +62,11 @@ class Parameters:
         self.backtoback = btb
 
 
-# Class to organize matchmaking
 class Match:
     """
     Class used for organizing matches
     """
+
     def __init__(self):
         self.players = dict()  # {playerID: [channelID, playerName]}
         self.playerlimit = 5
@@ -131,9 +128,8 @@ def recursiveInwardsCheck(oldObject: ServerData, newObject: ServerData) -> Serve
             recursiveInwardsCheck(getattr(oldObject, var), getattr(newObject, var))
     return newObject
 
+
 # Function to update all previously stored objects in order to avoid missing attributes when a new feature is made
-
-
 def updateObject(oldObject: ServerData) -> ServerData:
     """
     Updates the ServerData instances to the current status of the main class to avoid missing attributes

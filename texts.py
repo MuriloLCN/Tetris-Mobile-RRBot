@@ -1,6 +1,6 @@
 # It was a better decision to put most long strings in a separate file to keep things clearer and less messy overall
 
-tasks = "```The current team task system rotates between a set list of tasks, they go as follow (list made by K1DDz)\n\n" \
+tasks = "```The current team task system rotates between a set list of tasks, as follow (list made by K1DDz):\n\n" \
        "Score |500.000 * x| points in Quick Play\n"\
        "Knockout |250 * x| players in Royale\n"\
        "Clear |1250 * x| lines in Quick Play\n"\
@@ -138,17 +138,11 @@ menu_help_two = "```(help page 2)\n" \
                 "Lists the task cycle\n" \
                 "> $bonus\n" \
                 "Info for the team bonus mechanic\n" \
-                "> $modes\n" \
-                "List of all modes recorded\n" \
-                "> $seasons\n" \
-                "List of all seasons recorded\n" \
                 "> $guides\n" \
                 "List of some community-made guides for Tetris\n" \
-                "> $publisher\n" \
-                "Information about the game publisher\n" \
                 "> $fullguide\n" \
                 "Full in-depth guide for my commands\n" \
-                "[Verified only]" \
+                "[Verified only]\n" \
                 "> $rotation\n" \
                 "Help command for rotation system\n" \
                 "> $infotetris\n" \
@@ -167,12 +161,10 @@ menu_help_three = "```(help page 3)\n" \
                   "Calculates player averages based on profile data.\n" \
                   "> $royalecalcaverage <day of the month> <royale points>\n" \
                   "Calculates player averages based on royale season's data.\n" \
-                  "> $teamptscalculator <hours> <points>\n" \
-                  "Calculates average points per hour of a team.\n" \
                   "> $compcalculator <day>/<month>/<year> <qp hs> <mt hs> <lines> <tetrises> <allclears> <tspins> " \
                   "<challenges> <streak>\n" \
                   "Calculates ACxTH scores based on server-defined reference values.\n" \
-                  ">$diffcalculator <tetrises> <tspins> <b2bs> <lines>\n" \
+                  "> $diffcalculator <tetrises> <tspins> <b2bs> <lines>\n" \
                   "Calculates SP/Total, B2B/Total and B2B/SP clearance rates.\n" \
                   "```" \
                   ""
@@ -274,7 +266,7 @@ menu_help_nine = "```(help page 9)\n" \
                   "Sets the channel in which the Alarm System integration will occur. Gets floody.\n" \
                   "> $setreminderchannel <#channel>\n" \
                   "Sets the channel in which daily reminders will be sent in. Gets floody.\n" \
-                  "> $updatereferencevalues <name> <day>/<month>/<year> <quickplay highscore> <marathon highscore>" \
+                  "> $updatereferencevalues <day>/<month>/<year> <quickplay highscore> <marathon highscore>" \
                   " <lines> <tetrises> <allclears> <tspins> <challenges> <login streak> <back-to-backs>\n" \
                   "Changes the reference values used in calculations for the server.\n" \
                   "> $forgetchangermessages\n" \
@@ -285,10 +277,3 @@ menu_help_nine = "```(help page 9)\n" \
                   ""
 
 # TODO: Make $updatereferencevalues take in as an optional parameter a stored point
-
-# Admin commands
-# Notification systems + daily reminders
-# Role changers + votes
-# Graph generation
-#
-

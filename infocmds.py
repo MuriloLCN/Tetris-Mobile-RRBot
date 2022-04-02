@@ -44,26 +44,13 @@ async def check(client: discord.Client, message: discord.Message):
         await message.channel.send(texts.bonus)
         return
 
-    if message.content.startswith('$modes'):
-        await message.channel.send(texts.modes)
-        return
-
-    if message.content.startswith('$seasons'):
-        await message.channel.send(texts.seasons)
-        return
-
     if message.content.startswith('$guides'):
         await message.channel.send(texts.guides)
         return
 
-    # This tab is no longer available after the new studios bought over and all that was written became obsolete
-    if message.content.startswith('$publisher'):
-        await message.channel.send("Page under construction")
-        return
-
     if message.content.startswith('$fullguide'):
         await message.channel.send("You can find the full guide in here:\n"
-                                   "shorturl.at/bcejC")
+                                   "https://github.com/MuriloLCN/Tetris-Mobile-RRBot/blob/main/README.md")
         return
 
     if message.content.startswith('$requestverify'):

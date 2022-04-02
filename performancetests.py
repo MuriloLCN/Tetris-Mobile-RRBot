@@ -5,7 +5,6 @@ import discord
 import bonuspinging
 import calculators
 import classes
-import dailyreminder
 import dataupdate
 import graphs
 import infocmds
@@ -98,8 +97,6 @@ commands = [
         #'$addchanger <number>',
         #'$addvote <number>',
         #'$addpoint <string> <date>/<date>/<date> <number> <number> <number> <number> <number> <number> <number> <number> <number>',
-        #'$setbotchannel <string>',
-        #'$setreminderchannel <string>',
         #'$updatereferencevalues <date>/<date>/<date> <number> <number> <number> <number> <number> <number> <number> <number> <number>',
         #'$appendchangerid <number>',
         #'$storepoint <string> <date>/<date>/<date> <number> <number> <number> <number> <number> <number> <number> <number> <number>',
@@ -172,12 +169,11 @@ async def all_checks(message: discord.Message, serverdata: classes.ServerData, d
     """
     await bonuspinging.check(message, serverdata, data)
     await calculators.check(message, serverdata)
-    await dailyreminder.check(client, message, serverdata, data)
     await dataupdate.check(message, serverdata, data)
     await graphs.check(message, serverdata, data)
     await infocmds.check(client, message)
     await rolegiving.check(client, message, serverdata, data)
-    await rotation.check(message, serverdata, data)
+    await rotation.check(message, serverdata, data, client)
     await savingtetris.check(message, serverdata, data)
     await timer.check(message, serverdata)
     await matchmaking.check(message, matches, client)

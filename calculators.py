@@ -341,29 +341,6 @@ async def diffCalculatorCMD(message: discord.Message):
     gc.collect()
 
 
-async def teamPtsCalculatorCMD(message: discord.Message):
-    """
-    Calculates the average team points achieved in a certain amount of hours
-
-    Discord command:
-    $teamptscalculator (hours passed) (points)
-
-    :param message: Message context
-    """
-    try:
-        hours = int(str(message.content).split(' ')[1])
-        pts = int(str(message.content).split(' ')[2])
-        avg = round(pts / hours, 3)
-    except (IndexError, ValueError, ZeroDivisionError):
-        await message.channel.send("Incorrect syntax, use: '$teamptscalculator <hours> <points>'\n"
-                                   "Ex: $teamptscalculator 47 25200")
-        return
-    await message.channel.send("Average points per hour: " + str(avg))
-
-    del hours, pts, avg, message
-    gc.collect()
-
-
 async def compCalculatorCMD(message: discord.Message, serverData: classes.ServerData):
     """
     Comparative calculator command, compares the player's activity and technique score, calculated by a formula made
@@ -452,10 +429,6 @@ async def check(message, serverData):
         # Line clearance rate calculation
         if message.content.startswith('$diffcalculator'):
             await diffCalculatorCMD(message)
-
-        # Team points simple calculation (not very useful imo, added per request)
-        if message.content.startswith('$teamptscalculator'):
-            await teamPtsCalculatorCMD(message)
 
         # Technique and activity calculator (created by BlakeD38)
         if message.content.startswith('$compcalculator'):

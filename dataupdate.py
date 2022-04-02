@@ -117,66 +117,6 @@ async def setReferencePPSCMD(message: discord.Message, serverData: classes.Serve
     gc.collect()
 
 
-async def setBotChannelCMD(message: discord.Message, serverData: classes.ServerData, data: dict):
-    """
-    Changes the BOT Communication channel, which is where AlarmBot 'talks' with RRBot. Also used to maintain the
-    system as described in the full guide.
-
-    Discord command:
-    $setbotchannel (#channel)
-
-    :param message: Message context
-    :param serverData: Server data
-    :param data: Loaded data
-    """
-    if not (message.author.guild_permissions.administrator or message.author.id in privatedata.whitelist):
-        await message.channel.send("You don't have permission to use this command")
-        return
-
-    try:
-        channel = str(message.content).split('#')[1]
-        channel = channel[:-1]
-        serverData.proprieties.botchannel = channel
-        await message.add_reaction('\U0001F44D')
-        datahandling.writeserverdata(message.guild.id, serverData, data)
-        del channel
-        gc.collect()
-        return
-    except (IndexError, ValueError):
-        await message.channel.send("Invalid syntax, use '$setbotchannel #channel' as in '$setbotchannel #general'")
-        return
-
-
-async def setReminderChannelCMD(message: discord.Message, serverData: classes.ServerData, data: dict):
-    """
-    Changes the channel in which daily reminders for doing the daily tasks are sent
-
-    Discord command:
-    $setreminderchannel (#channel)
-
-    :param message: Message context
-    :param serverData: Server data
-    :param data: Loaded data
-    """
-    if not (message.author.guild_permissions.administrator or message.author.id in privatedata.whitelist):
-        await message.channel.send("You don't have permission to use this command")
-        return
-
-    try:
-        channel = str(message.content).split('#')[1]
-        channel = channel[:-1]
-        serverData.proprieties.reminderchannel = channel
-        await message.add_reaction('\U0001F44D')
-        del channel
-        gc.collect()
-        datahandling.writeserverdata(message.guild.id, serverData, data)
-        return
-    except (IndexError, ValueError):
-        await message.channel.send(
-            "Invalid syntax, use '$setreminderchannel #channel' as in '$setreminderchannel #general'")
-        return
-
-
 async def printServerDataCMD(message: discord.Message, serverData: classes.ServerData):
     """
     Prints all data stored for the server
@@ -518,8 +458,6 @@ async def check(message, serverData, data):
     $setrole
     $setnewlimit
     $setreferencepps
-    $setbotchannel
-    $setreminderchannel
     $printserverdata
     $resetserverdata
     $clearcache
@@ -547,12 +485,6 @@ async def check(message, serverData, data):
 
         if message.content.startswith('$setreferencepps'):
             await setReferencePPSCMD(message, serverData, data)
-
-        if message.content.startswith('$setbotchannel'):
-            await setBotChannelCMD(message, serverData, data)
-
-        if message.content.startswith('$setreminderchannel'):
-            await setReminderChannelCMD(message, serverData, data)
 
         if message.content.startswith('$printserverdata'):
             await printServerDataCMD(message, serverData)
