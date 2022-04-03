@@ -191,7 +191,13 @@ async def clockLoop(client: discord.client):
         for key in allAlarms.keys():
             if currentHour == (allAlarms[key][0] - allAlarms[key][2]):
                 if currentMinute == allAlarms[key][1]:
-                    if allAlarms[key][4]:
+                    try:
+                        isSilenced = allAlarms[key][4]
+                    except IndexError:
+                        isSilenced = False
+                        allAlarms[key].append(isSilenced)
+                        writeUpdatedAlarms(allAlarms)
+                    if isSilenced:
                         allAlarms[key][4] = False
                         writeUpdatedAlarms(allAlarms)
                     else:
