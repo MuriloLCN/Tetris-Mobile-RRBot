@@ -15,20 +15,21 @@ async def check(client, payload, data):
     :param payload: Payload context
     :param data: Loaded data
     """
-    channel = await client.fetch_channel(payload.channel_id)
-    message = await channel.fetch_message(payload.message_id)
+
+    serverData = datahandling.getserverdata(payload.guild_id, data)
+
+    if str(payload.message_id) not in serverData.rolechangerids:
+        return
 
     user = payload.member
-    reaction = payload.emoji
-
-    curId = message.guild.id
-    serverData = datahandling.getserverdata(curId, data)
 
     if user.id == client.user.id:
         return
 
-    if str(message.id) not in serverData.rolechangerids:
-        return
+    channel = await client.fetch_channel(payload.channel_id)
+    message = await channel.fetch_message(payload.message_id)
+
+    reaction = payload.emoji
 
     # Since the roles are meant to alternate, meaning a user can only have one of the available roles at any given time,
     # the role that will be given is stored in 'role', and all others are stored in 'removeRoles'. This way we can
@@ -89,7 +90,7 @@ async def check(client, payload, data):
             except AttributeError:
                 continue
 
-        del channel, message, user, reaction, curId, serverData, rows, removeRoles, isOption, role, data, message
+        del channel, message, user, reaction, serverData, rows, removeRoles, isOption, role, data, message
         gc.collect()
 
     else:

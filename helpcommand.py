@@ -51,20 +51,21 @@ async def reaction_check(client, payload, data):
     :param payload: Message payload
     :param data: Loaded data dict
     """
-    channel = await client.fetch_channel(payload.channel_id)
-    message = await channel.fetch_message(payload.message_id)
 
     user = payload.member
-    reaction = payload.emoji
-
-    curId = message.guild.id
-    serverData = datahandling.getserverdata(curId, data)
 
     if user.id == client.user.id:
         return
 
-    if message.id not in serverData.cached.helpmessageids:
+    serverData = datahandling.getserverdata(payload.guild_id, data)
+
+    if payload.message_id not in serverData.cached.helpmessageids:
         return
+
+    channel = await client.fetch_channel(payload.channel_id)
+    message = await channel.fetch_message(payload.message_id)
+
+    reaction = payload.emoji
 
     pages = [
         texts.menu_help_one,
