@@ -90,7 +90,7 @@ async def check(client, payload, data):
             except AttributeError:
                 continue
 
-        del channel, message, user, reaction, serverData, rows, removeRoles, isOption, role, data, message
+        del channel, message, user, reaction, serverData, rows, removeRoles, isOption, role, data
         gc.collect()
 
     else:
