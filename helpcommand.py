@@ -29,11 +29,11 @@ async def check(message: discord.Message, serverData: classes.ServerData, data: 
 
     if message.content.startswith('$?'):
 
-        # If there are more than 3 help commands active at the same time in a server
+        # If there are more than 3 help commands active at the same time in a server, stop registering the older one
         if len(serverData.cached.helpmessageids) > 3:
             serverData.cached.helpmessageids.pop(0)
 
-        newMessage = await message.channel.send(texts.menu_help_one)
+        newMessage = await message.channel.send(texts.menu_help_header)
 
         await newMessage.add_reaction('⬅')
         await newMessage.add_reaction('➡')
@@ -85,12 +85,12 @@ async def reaction_check(client, payload, data):
 
     if reaction == '\U00002B05':
         if page == 1:
-            newPage = 9
+            newPage = len(pages)
         else:
             newPage = page - 1
 
     elif reaction == '\U000027A1':
-        if page == 9:
+        if page == len(pages):
             newPage = 1
         else:
             newPage = page + 1

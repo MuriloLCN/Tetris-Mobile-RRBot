@@ -276,4 +276,22 @@ menu_help_nine = "```(help page 9)\n" \
                   "```" \
                   ""
 
+menu_help_header = "```\nTetris Mobile RRBot Help command" \
+                   "\n\nUse the reactions to navigate between pages" \
+                   "\n\n" \
+                   "    ────────────────────┐\n" \
+                   "   /                   /│      Pages summary:\n" \
+                   "  /                   / │      Page 1: Timer commands\n" \
+                   " ┌───────────────────┐  │      Page 2: Information commands\n" \
+                   " │                   │  │      Page 3: Calculator commands\n" \
+                   " │      TETRIS       │ /       Page 4: Rotation commands\n" \
+                   " │                   │/        Page 5: Notification commands\n" \
+                   " └──────┐     ┌──┬───┘         Page 6: Reminder commands\n" \
+                   "        │     │  │             Page 7: Changer & votes commands\n" \
+                   "        │     │  │             Page 8: Graphing commands\n" \
+                   "        │     │ /              Page 9: Admin and management commands\n" \
+                   "        │     │/         \n" \
+                   "        └─────┘          \n" \
+                   "```"
+
 # TODO: Make $updatereferencevalues take in as an optional parameter a stored point
