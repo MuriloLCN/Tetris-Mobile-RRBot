@@ -416,20 +416,18 @@ async def check(message, serverData):
     if message.content.startswith('$ppscalculator'):
         await ppsCalculatorCMD(message)
 
-    if message.guild.id in privatedata.fullAccessServers:
+    # Amount played per day based on profile data
+    if message.content.startswith('$calculateaverage'):
+        await calculateAverageCMD(message, serverData)
 
-        # Amount played per day based on profile data
-        if message.content.startswith('$calculateaverage'):
-            await calculateAverageCMD(message, serverData)
+    # Amount played per day based on royale data
+    if message.content.startswith('$royalecalcaverage'):
+        await royaleCalcAverageCMD(message, serverData)
 
-        # Amount played per day based on royale data
-        if message.content.startswith('$royalecalcaverage'):
-            await royaleCalcAverageCMD(message, serverData)
+    # Line clearance rate calculation
+    if message.content.startswith('$diffcalculator'):
+        await diffCalculatorCMD(message)
 
-        # Line clearance rate calculation
-        if message.content.startswith('$diffcalculator'):
-            await diffCalculatorCMD(message)
-
-        # Technique and activity calculator (created by BlakeD38)
-        if message.content.startswith('$compcalculator'):
-            await compCalculatorCMD(message, serverData)
+    # Technique and activity calculator (created by BlakeD38)
+    if message.content.startswith('$compcalculator'):
+        await compCalculatorCMD(message, serverData)

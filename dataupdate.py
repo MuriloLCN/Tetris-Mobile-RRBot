@@ -468,40 +468,38 @@ async def check(message, serverData):
     if message.content.startswith('$setnewlimit'):
         await setNewLimitCMD(message, serverData)
 
-    if message.guild.id in privatedata.fullAccessServers:
+    if message.content.startswith('$setreferencepps'):
+        await setReferencePPSCMD(message, serverData)
 
-        if message.content.startswith('$setreferencepps'):
-            await setReferencePPSCMD(message, serverData)
+    if message.content.startswith('$printserverdata'):
+        await printServerDataCMD(message, serverData)
 
-        if message.content.startswith('$printserverdata'):
-            await printServerDataCMD(message, serverData)
+    if message.content.startswith('$resetserverdata'):
+        await resetServerDataCMD(message)
 
-        if message.content.startswith('$resetserverdata'):
-            await resetServerDataCMD(message)
+    if message.content.startswith('$clearcache'):
+        await clearCacheCMD(message, serverData)
 
-        if message.content.startswith('$clearcache'):
-            await clearCacheCMD(message, serverData)
+    if message.content.startswith('$updatereferencevalues'):
+        await updateReferenceValuesCMD(message, serverData)
 
-        if message.content.startswith('$updatereferencevalues'):
-            await updateReferenceValuesCMD(message, serverData)
+    if message.content.startswith('$forgetchangermessages'):
+        await forgetChangerMessagesCMD(message, serverData)
 
-        if message.content.startswith('$forgetchangermessages'):
-            await forgetChangerMessagesCMD(message, serverData)
+    if message.content.startswith('$appendchangerid'):
+        await appendChangerIDCMD(message, serverData)
 
-        if message.content.startswith('$appendchangerid'):
-            await appendChangerIDCMD(message, serverData)
+    if message.content.startswith('$storepoint'):
+        await storePointCMD(message, serverData)
 
-        if message.content.startswith('$storepoint'):
-            await storePointCMD(message, serverData)
+    if message.content.startswith('$deletepoint'):
+        await deletePointCMD(message, serverData)
 
-        if message.content.startswith('$deletepoint'):
-            await deletePointCMD(message, serverData)
+    if message.content.startswith('$clearpoints'):
+        await clearPointsCMD(message, serverData)
 
-        if message.content.startswith('$clearpoints'):
-            await clearPointsCMD(message, serverData)
+    if message.content.startswith('$listpoints'):
+        await listPointsCMD(message, serverData)
 
-        if message.content.startswith('$listpoints'):
-            await listPointsCMD(message, serverData)
-
-        if message.content.startswith('$printpoint'):
-            await printPointCMD(message, serverData)
+    if message.content.startswith('$printpoint'):
+        await printPointCMD(message, serverData)
