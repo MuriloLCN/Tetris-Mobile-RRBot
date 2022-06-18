@@ -478,15 +478,9 @@ Better documentation of the code
 
 ### - Intended things for the future
 
-Rework file storage system -> Make every server have it's own file and only have it be loaded when needed.
-
 Store Discord.py classes as a whole -> Reduce needs to make API calls using client.fetch_<something>()
   
 Rework radar graph generation -> Completely fix memory leak.
-
-Rework private data storage and access -> Make it more secure and need special keys for it.
-  
-Rewrite old code.
   
 See what features can be implemented or discarded in future game updates.
   
