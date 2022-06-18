@@ -21,7 +21,7 @@ async def fullBonusPingCMD(message: discord.Message):
     await message.channel.send(texts.fullbonusping)
 
 
-async def dailiesDoneCMD(message: discord.Message, serverData: classes.ServerData, data: dict):
+async def dailiesDoneCMD(message: discord.Message, serverData: classes.ServerData):
     """
     Does the necessary checks when a player has done their daily tasks
     Adds/Removes them from serverData.cached.donedailies
@@ -32,7 +32,6 @@ async def dailiesDoneCMD(message: discord.Message, serverData: classes.ServerDat
 
     :param message: Message context
     :param serverData: Server data
-    :param data: Loaded data
     """
     name = str(message.author.id)
 
@@ -73,19 +72,18 @@ async def dailiesDoneCMD(message: discord.Message, serverData: classes.ServerDat
             except IndexError:
                 pass
 
-    datahandling.writeserverdata(message.guild.id, serverData, data)
+    datahandling.writeserverdata(message.guild.id, serverData)
 
-    del name, serverData, data, message
+    del name, serverData, message
     gc.collect()
 
 
-async def gotFullBonusCMD(message: discord.Message, serverData: classes.ServerData, data: dict):
+async def gotFullBonusCMD(message: discord.Message, serverData: classes.ServerData):
     """
     Signals every player that has done their daily tasks that the team has achieved full bonus
 
     :param message: Message context
     :param serverData: Server data
-    :param data: Loaded data
     """
     myString = ''
 
@@ -95,13 +93,13 @@ async def gotFullBonusCMD(message: discord.Message, serverData: classes.ServerDa
     await message.channel.send("Team now has full bonus, let's get that bread! " + myString)
     serverData.cached.donedailies.clear()
 
-    datahandling.writeserverdata(message.guild.id, serverData, data)
-    del myString, serverData, data, message
+    datahandling.writeserverdata(message.guild.id, serverData)
+    del myString, serverData, message
     gc.collect()
     return
 
 
-async def check(message: discord.Message, serverData: classes.ServerData, data: dict):
+async def check(message: discord.Message, serverData: classes.ServerData):
     """
     Main check function
 
@@ -112,7 +110,6 @@ async def check(message: discord.Message, serverData: classes.ServerData, data: 
 
     :param message: Message context
     :param serverData: Server data
-    :param data: Loaded data
     """
     # Help command
     if message.content.startswith('$fullbonusping'):
@@ -120,8 +117,8 @@ async def check(message: discord.Message, serverData: classes.ServerData, data: 
 
     # Add/Remove name from list
     if message.content.startswith('$dailiesdone'):
-        await dailiesDoneCMD(message, serverData, data)
+        await dailiesDoneCMD(message, serverData)
 
     # Pinging command
     if message.content.startswith('$gotfullbonus'):
-        await gotFullBonusCMD(message, serverData, data)
+        await gotFullBonusCMD(message, serverData)

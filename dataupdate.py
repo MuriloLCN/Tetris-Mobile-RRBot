@@ -6,7 +6,7 @@ import privatedata
 import gc
 
 
-async def setRoleCMD(message: discord.Message, serverData: classes.ServerData, data: dict):
+async def setRoleCMD(message: discord.Message, serverData: classes.ServerData):
     """
     Changes the role that's mentioned when a timer runs out
 
@@ -15,7 +15,6 @@ async def setRoleCMD(message: discord.Message, serverData: classes.ServerData, d
 
     :param message: Message context
     :param serverData: Server data
-    :param data: Loaded data
     """
 
     if not message.author.guild_permissions.administrator and message.author.id not in privatedata.whitelist:
@@ -42,13 +41,13 @@ async def setRoleCMD(message: discord.Message, serverData: classes.ServerData, d
 
     await message.channel.send("Switched role to: " + temp_role)
     serverData.proprieties.currentrole = temp_role
-    datahandling.writeserverdata(message.guild.id, serverData, data)
+    datahandling.writeserverdata(message.guild.id, serverData)
 
-    del temp_role, serverData, data, message
+    del temp_role, serverData, message
     gc.collect()
 
 
-async def setNewLimitCMD(message: discord.Message, serverData: classes.ServerData, data: dict):
+async def setNewLimitCMD(message: discord.Message, serverData: classes.ServerData):
     """
     Changes the time limit of how long a timer can be
 
@@ -57,7 +56,6 @@ async def setNewLimitCMD(message: discord.Message, serverData: classes.ServerDat
 
     :param message: Message context
     :param serverData: Server data
-    :param data: Loaded data
     """
     if not message.author.guild_permissions.administrator or message.author.id not in privatedata.whitelist:
         await message.channel.send("You do not have permission to use this command")
@@ -81,14 +79,14 @@ async def setNewLimitCMD(message: discord.Message, serverData: classes.ServerDat
         return
 
     serverData.proprieties.currentlimit = float(novoLimite)
-    datahandling.writeserverdata(message.guild.id, serverData, data)
+    datahandling.writeserverdata(message.guild.id, serverData)
     await message.channel.send('Time limit changed to ' + str(novoLimite) + ' minutes maximum')
 
-    del novoLimite, serverData, data, message
+    del novoLimite, serverData, message
     gc.collect()
 
 
-async def setReferencePPSCMD(message: discord.Message, serverData: classes.ServerData, data: dict):
+async def setReferencePPSCMD(message: discord.Message, serverData: classes.ServerData):
     """
     Changes the reference PPS values to be used in calculations for the server
 
@@ -97,7 +95,6 @@ async def setReferencePPSCMD(message: discord.Message, serverData: classes.Serve
 
     :param message: Message context
     :param serverData: Server data
-    :param data: Loaded data
     """
     try:
         value = str(message.content).split(' ')[1]
@@ -110,10 +107,10 @@ async def setReferencePPSCMD(message: discord.Message, serverData: classes.Serve
         await message.channel.send("Invalid PPS value")
         return
     serverData.proprieties.referencepps = value
-    datahandling.writeserverdata(message.guild.id, serverData, data)
+    datahandling.writeserverdata(message.guild.id, serverData)
     await message.add_reaction('\U0001F44D')
 
-    del value, serverData, data, message
+    del value, serverData, message
     gc.collect()
 
 
@@ -141,7 +138,7 @@ async def printServerDataCMD(message: discord.Message, serverData: classes.Serve
     return
 
 
-async def resetServerDataCMD(message: discord.Message, data: dict):
+async def resetServerDataCMD(message: discord.Message):
     """
     Resets current server's data to a virgin state
 
@@ -149,18 +146,17 @@ async def resetServerDataCMD(message: discord.Message, data: dict):
     $resetserverdata
 
     :param message: Message context
-    :param data: Loaded data
     """
     if not (message.author.guild_permissions.administrator or message.author.id in privatedata.whitelist):
         await message.channel.send("You don't have permission to use this command")
         return
 
     serverData = classes.ServerData()
-    datahandling.writeserverdata(message.guild.id, serverData, data)
+    datahandling.writeserverdata(message.guild.id, serverData)
     await message.add_reaction('\U0001F44D')
 
 
-async def clearCacheCMD(message: discord.Message, serverData: classes.ServerData, data: dict):
+async def clearCacheCMD(message: discord.Message, serverData: classes.ServerData):
     """
     Clears the .cached attr of the ServerData
 
@@ -169,7 +165,6 @@ async def clearCacheCMD(message: discord.Message, serverData: classes.ServerData
 
     :param message: Message context
     :param serverData: Server data
-    :param data: Loaded data
     """
     if not (message.author.guild_permissions.administrator or message.author.id in privatedata.whitelist):
         await message.channel.send("You don't have permission to use this command")
@@ -177,14 +172,14 @@ async def clearCacheCMD(message: discord.Message, serverData: classes.ServerData
 
     serverData.cached = classes.Cache()
 
-    datahandling.writeserverdata(message.guild.id, serverData, data)
+    datahandling.writeserverdata(message.guild.id, serverData)
     await message.add_reaction('\U0001F44D')
     await message.channel.send("Cleared cache for rotation, dailies, tetrises, etc")
 
     return
 
 
-async def updateReferenceValuesCMD(message: discord.Message, serverData: classes.ServerData, data: dict):
+async def updateReferenceValuesCMD(message: discord.Message, serverData: classes.ServerData):
     """
     Updates the reference player values to be used in calculations for the server
 
@@ -194,7 +189,6 @@ async def updateReferenceValuesCMD(message: discord.Message, serverData: classes
 
     :param message: Message context
     :param serverData: Server data
-    :param data: Loaded data
     """
     if not (message.author.guild_permissions.administrator or message.author.id in privatedata.whitelist):
         await message.channel.send("You don't have permission to use this command")
@@ -222,7 +216,7 @@ async def updateReferenceValuesCMD(message: discord.Message, serverData: classes
             year, month, day, qphs, mths, lines, tet, allc, tsd, chl, strk, btb
         )
 
-        datahandling.writeserverdata(message.guild.id, serverData, data)
+        datahandling.writeserverdata(message.guild.id, serverData)
         await message.add_reaction('\U0001F44D')
     except (IndexError, Exception):
         await message.channel.send("Incorrect syntax, correct usage: \n"
@@ -232,11 +226,11 @@ async def updateReferenceValuesCMD(message: discord.Message, serverData: classes
         return
 
     del stringy, referenceString, splitty, year, month, day, qphs, mths, lines, tet, allc, tsd, chl, strk, btb
-    del serverData, data, message
+    del serverData, message
     gc.collect()
 
 
-async def forgetChangerMessagesCMD(message: discord.Message, serverData: classes.ServerData, data: dict):
+async def forgetChangerMessagesCMD(message: discord.Message, serverData: classes.ServerData):
     """
     Forgets all changer messages, so they'll no longer work
 
@@ -245,7 +239,6 @@ async def forgetChangerMessagesCMD(message: discord.Message, serverData: classes
 
     :param message: Message context
     :param serverData: Server data
-    :param data: Loaded data
     """
     if not (message.author.guild_permissions.administrator or message.author.id in privatedata.whitelist):
         await message.channel.send("You don't have permission to use this command")
@@ -253,10 +246,10 @@ async def forgetChangerMessagesCMD(message: discord.Message, serverData: classes
 
     serverData.rolechangerids = []
     await message.add_reaction('\U0001F44D')
-    datahandling.writeserverdata(message.guild.id, serverData, data)
+    datahandling.writeserverdata(message.guild.id, serverData)
 
 
-async def appendChangerIDCMD(message: discord.Message, serverData: classes.ServerData, data: dict):
+async def appendChangerIDCMD(message: discord.Message, serverData: classes.ServerData):
     """
     Adds a message ID to the 'changer messages' stored ids, so any user message can be used to switch roles, as long
     as it's formatted in the same way. This way those messages can be dynamically edited on-the-go
@@ -266,7 +259,6 @@ async def appendChangerIDCMD(message: discord.Message, serverData: classes.Serve
 
     :param message: Message context
     :param serverData: Server data
-    :param data: Loaded data
     """
     if not (message.author.guild_permissions.administrator or message.author.id in privatedata.whitelist):
         await message.channel.send("You don't have permission to use this command")
@@ -281,12 +273,12 @@ async def appendChangerIDCMD(message: discord.Message, serverData: classes.Serve
 
     serverData.rolechangerids.append(value)
     await message.add_reaction('\U0001F44D')
-    datahandling.writeserverdata(message.guild.id, serverData, data)
-    del value, serverData, data, message
+    datahandling.writeserverdata(message.guild.id, serverData)
+    del value, serverData, message
     gc.collect()
 
 
-async def storePointCMD(message: discord.Message, serverData: classes.ServerData, data: dict):
+async def storePointCMD(message: discord.Message, serverData: classes.ServerData):
     """
     Stores a data point
 
@@ -296,7 +288,6 @@ async def storePointCMD(message: discord.Message, serverData: classes.ServerData
 
     :param message: Message context
     :param serverData: Server data
-    :param data: Loaded data
     """
     # Reused code from $addpoint in graphs.py
     try:
@@ -347,13 +338,13 @@ async def storePointCMD(message: discord.Message, serverData: classes.ServerData
 
     serverData.storedpoints.update({username: param})
     await message.add_reaction('\U0001F44D')
-    datahandling.writeserverdata(message.guild.id, serverData, data)
+    datahandling.writeserverdata(message.guild.id, serverData)
     del texts, username, date, quickplayhs, marathonhs, linec, tetrises, allclears, tspins, challenges, streak, btbs
-    del serverData, data, message
+    del serverData, message
     gc.collect()
 
 
-async def deletePointCMD(message: discord.Message, serverData: classes.ServerData, data: dict):
+async def deletePointCMD(message: discord.Message, serverData: classes.ServerData):
     """
     Deletes a specific point
 
@@ -362,7 +353,6 @@ async def deletePointCMD(message: discord.Message, serverData: classes.ServerDat
 
     :param message: Message context
     :param serverData: Server data
-    :param data: Loaded data
     """
     try:
         name = str(message.content).split(' ')[1]
@@ -379,12 +369,12 @@ async def deletePointCMD(message: discord.Message, serverData: classes.ServerDat
         return
 
     await message.add_reaction('\U0001F44D')
-    datahandling.writeserverdata(message.guild.id, serverData, data)
-    del name, serverData, data, message
+    datahandling.writeserverdata(message.guild.id, serverData)
+    del name, serverData, message
     gc.collect()
 
 
-async def clearPointsCMD(message: discord.Message, serverData: classes.ServerData, data: dict):
+async def clearPointsCMD(message: discord.Message, serverData: classes.ServerData):
     """
     Clears all stored points
 
@@ -393,11 +383,10 @@ async def clearPointsCMD(message: discord.Message, serverData: classes.ServerDat
 
     :param message: Message context
     :param serverData: Server data
-    :param data: Loaded data
     """
     serverData.storedpoints = dict()
     await message.add_reaction('\U0001F44D')
-    datahandling.writeserverdata(message.guild.id, serverData, data)
+    datahandling.writeserverdata(message.guild.id, serverData)
 
 
 async def listPointsCMD(message: discord.Message, serverData: classes.ServerData):
@@ -450,7 +439,7 @@ async def printPointCMD(message: discord.Message, serverData: classes.ServerData
     gc.collect()
 
 
-async def check(message, serverData, data):
+async def check(message, serverData):
     """
     Main check function
 
@@ -472,46 +461,45 @@ async def check(message, serverData, data):
 
     :param message: Message context
     :param serverData: Server data
-    :param data: Loaded data
     """
 
     if message.content.startswith('$setrole'):
-        await setRoleCMD(message, serverData, data)
+        await setRoleCMD(message, serverData)
 
     if message.content.startswith('$setnewlimit'):
-        await setNewLimitCMD(message, serverData, data)
+        await setNewLimitCMD(message, serverData)
 
     if message.guild.id in privatedata.fullAccessServers:
 
         if message.content.startswith('$setreferencepps'):
-            await setReferencePPSCMD(message, serverData, data)
+            await setReferencePPSCMD(message, serverData)
 
         if message.content.startswith('$printserverdata'):
             await printServerDataCMD(message, serverData)
 
         if message.content.startswith('$resetserverdata'):
-            await resetServerDataCMD(message, data)
+            await resetServerDataCMD(message)
 
         if message.content.startswith('$clearcache'):
-            await clearCacheCMD(message, serverData, data)
+            await clearCacheCMD(message, serverData)
 
         if message.content.startswith('$updatereferencevalues'):
-            await updateReferenceValuesCMD(message, serverData, data)
+            await updateReferenceValuesCMD(message, serverData)
 
         if message.content.startswith('$forgetchangermessages'):
-            await forgetChangerMessagesCMD(message, serverData, data)
+            await forgetChangerMessagesCMD(message, serverData)
 
         if message.content.startswith('$appendchangerid'):
-            await appendChangerIDCMD(message, serverData, data)
+            await appendChangerIDCMD(message, serverData)
 
         if message.content.startswith('$storepoint'):
-            await storePointCMD(message, serverData, data)
+            await storePointCMD(message, serverData)
 
         if message.content.startswith('$deletepoint'):
-            await deletePointCMD(message, serverData, data)
+            await deletePointCMD(message, serverData)
 
         if message.content.startswith('$clearpoints'):
-            await clearPointsCMD(message, serverData, data)
+            await clearPointsCMD(message, serverData)
 
         if message.content.startswith('$listpoints'):
             await listPointsCMD(message, serverData)

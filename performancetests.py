@@ -81,32 +81,32 @@ datetest = [
 ]
 
 commands = [
-        #'$createtimer <number>',
-        #'$createtimer &<number> &<date>:<date>',
-        #'$ppscalculator <number>',
-        #'$setrole <string>',
-        #'$setnewlimit <number>',
-        #'$calculateaverage <number> <date>/<date>/<date> ',
-        #'$royalecalcaverage <number> <number>',
-        #'$teamptscalculator <number> <number> ',
-        #'$compcalculator <date>/<date>/<date> <number> <number> <number> <number> <number> <number> <number> <number>',
-        #'$diffcalculator <number> <number> <number> <number>',
-        #'$createdailyreminder <date> <date>:<date>',
-        #'$setreferencepps <number>',
-        #'$addoption &<string> &<string>',
-        #'$addchanger <number>',
-        #'$addvote <number>',
-        #'$addpoint <string> <date>/<date>/<date> <number> <number> <number> <number> <number> <number> <number> <number> <number>',
-        #'$updatereferencevalues <date>/<date>/<date> <number> <number> <number> <number> <number> <number> <number> <number> <number>',
-        #'$appendchangerid <number>',
-        #'$storepoint <string> <date>/<date>/<date> <number> <number> <number> <number> <number> <number> <number> <number> <number>',
-        #'$deletepoint <string>',
-        #'$loadpoint <string>',
-        #'$printpoint <string>',
-        #'$enter',
-        #'$leave',
-        #'$savedtetris',
-        #'$dailiesdone',
+        '$createtimer <number>',
+        '$createtimer &<number> &<date>:<date>',
+        '$ppscalculator <number>',
+        '$setrole <string>',
+        '$setnewlimit <number>',
+        '$calculateaverage <number> <date>/<date>/<date> ',
+        '$royalecalcaverage <number> <number>',
+        '$teamptscalculator <number> <number> ',
+        '$compcalculator <date>/<date>/<date> <number> <number> <number> <number> <number> <number> <number> <number>',
+        '$diffcalculator <number> <number> <number> <number>',
+        '$createdailyreminder <date> <date>:<date>',
+        '$setreferencepps <number>',
+        '$addoption &<string> &<string>',
+        '$addchanger <number>',
+        '$addvote <number>',
+        '$addpoint <string> <date>/<date>/<date> <number> <number> <number> <number> <number> <number> <number> <number> <number>',
+        '$updatereferencevalues <date>/<date>/<date> <number> <number> <number> <number> <number> <number> <number> <number> <number>',
+        '$appendchangerid <number>',
+        '$storepoint <string> <date>/<date>/<date> <number> <number> <number> <number> <number> <number> <number> <number> <number>',
+        '$deletepoint <string>',
+        '$loadpoint <string>',
+        '$printpoint <string>',
+        '$enter',
+        '$leave',
+        '$savedtetris',
+        '$dailiesdone',
         '$loadallpoints',
         '$generategraphs ABCD'
 ]
@@ -124,7 +124,7 @@ sequential_commands = [
 ]
 
 
-async def check_command(message: discord.Message, serverdata: classes.ServerData, data: dict, client: discord.Client, matches: classes.Match, value: int):
+async def check_command(message: discord.Message, serverdata: classes.ServerData, client: discord.Client, matches: classes.Match, value: int):
     """
     Runs the list of commands to be checked with some wacky parameters
     """
@@ -137,12 +137,12 @@ async def check_command(message: discord.Message, serverdata: classes.ServerData
             random_date = datetest[i % len(datetest)]
             newcommands = newcommand.format(number=random_num, string=random_string, date=random_date)
             message.content = newcommands
-            await all_checks(message, serverdata, data, client, matches)
+            await all_checks(message, serverdata, client, matches)
     del random_num, random_string, random_date, newcommands, newcommand
     gc.collect()
 
 
-async def stress_test(message: discord.Message, serverdata: classes.ServerData, data: dict, client: discord.Client, matches: classes.Match, value: int):
+async def stress_test(message: discord.Message, serverdata: classes.ServerData, client: discord.Client, matches: classes.Match, value: int):
     """
     Runs the list of commands with somewhat normal parameters for stress testing
     """
@@ -151,41 +151,40 @@ async def stress_test(message: discord.Message, serverdata: classes.ServerData, 
         for i in range(value):
             newcommands = newcommand.format(number=numbers, string=strings, date=dates)
             message.content = newcommands
-            await all_checks(message, serverdata, data, client, matches)
+            await all_checks(message, serverdata, client, matches)
 
     for arrcommands in sequential_commands:
         for i in range(value):
             message.content = arrcommands[0]
-            await all_checks(message, serverdata, data, client, matches)
+            await all_checks(message, serverdata, client, matches)
             message.content = arrcommands[1]
-            await all_checks(message, serverdata, data, client, matches)
+            await all_checks(message, serverdata, client, matches)
     del newcommand, newcommands
     gc.collect()
 
 
-async def all_checks(message: discord.Message, serverdata: classes.ServerData, data: dict, client: discord.Client, matches: classes.Match):
+async def all_checks(message: discord.Message, serverdata: classes.ServerData, client: discord.Client, matches: classes.Match):
     """
     Compares the edited message content with all current modules' check() command to run the given command
     """
-    await bonuspinging.check(message, serverdata, data)
+    await bonuspinging.check(message, serverdata)
     await calculators.check(message, serverdata)
-    await dataupdate.check(message, serverdata, data)
-    await graphs.check(message, serverdata, data)
+    await dataupdate.check(message, serverdata)
+    await graphs.check(message, serverdata)
     await infocmds.check(client, message)
-    await rolegiving.check(client, message, serverdata, data)
-    await rotation.check(message, serverdata, data, client)
-    await savingtetris.check(message, serverdata, data)
+    await rolegiving.check(client, message, serverdata)
+    await rotation.check(message, serverdata, client)
+    await savingtetris.check(message, serverdata)
     await timer.check(message, serverdata)
     await matchmaking.check(message, matches, client)
 
 
-async def check(message, serverdata, data, client, matches):
+async def check(message, serverdata, client, matches):
     """
     Main check function
 
     :param message: Message context
     :param serverdata: Server data
-    :param data: Loaded data
     :param client: Client context
     :param matches: Match object
     """
@@ -202,12 +201,12 @@ async def check(message, serverdata, data, client, matches):
             return
 
         # First check is simply to see if weird inputs break the command
-        #await check_command(message, serverdata, data, client, matches, value)
+        await check_command(message, serverdata, client, matches, value)
         # Only needs to be checked again when new features are added
         print('Compatibility test done, starting stress test')
         # Second check is used for a better measurement of RAM usage for each command
-        await stress_test(message, serverdata, data, client, matches, value)
+        await stress_test(message, serverdata, client, matches, value)
 
         # print('RAM after: {}'.format(getMemory()))
-        del client, data, matches, message, serverdata
+        del client, matches, message, serverdata
         gc.collect()

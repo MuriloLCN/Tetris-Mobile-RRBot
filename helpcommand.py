@@ -18,13 +18,12 @@ def getHelpPage(content: str):
         return 1
 
 
-async def check(message: discord.Message, serverData: classes.ServerData, data: dict):
+async def check(message: discord.Message, serverData: classes.ServerData):
     """
     Main check function
 
     :param message: Message context
     :param serverData: Server data
-    :param data: Loaded data dict
     """
 
     if message.content.startswith('$?'):
@@ -40,16 +39,15 @@ async def check(message: discord.Message, serverData: classes.ServerData, data: 
 
         serverData.cached.helpmessageids.append(newMessage.id)
 
-        datahandling.writeserverdata(message.guild.id, serverData, data)
+        datahandling.writeserverdata(message.guild.id, serverData)
 
 
-async def reaction_check(client, payload, data):
+async def reaction_check(client, payload):
     """
     Checks for reaction events and changes the pages accordingly
 
     :param client: Client context
     :param payload: Message payload
-    :param data: Loaded data dict
     """
 
     user = payload.member
@@ -57,7 +55,7 @@ async def reaction_check(client, payload, data):
     if user.id == client.user.id:
         return
 
-    serverData = datahandling.getserverdata(payload.guild_id, data)
+    serverData = datahandling.loadData(str(payload.guild_id))
 
     if payload.message_id not in serverData.cached.helpmessageids:
         return

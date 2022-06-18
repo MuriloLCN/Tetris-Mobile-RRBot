@@ -1,8 +1,10 @@
 aiohttp==3.7.4.post0
 async-timeout==3.0.1
 attrs==21.4.0
+certifi==2021.10.8
 cffi==1.15.0
 chardet==4.0.0
+charset-normalizer==2.0.12
 cycler==0.11.0
 dill==0.3.4
 discord.py==1.7.3
@@ -17,6 +19,8 @@ Pillow==9.0.1
 pycparser==2.21
 pyparsing==3.0.7
 python-dateutil==2.8.2
+requests==2.27.1
 six==1.16.0
 typing_extensions==4.1.1
+urllib3==1.26.8
 yarl==1.7.2

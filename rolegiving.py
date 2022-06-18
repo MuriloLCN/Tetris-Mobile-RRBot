@@ -7,7 +7,7 @@ import datahandling
 import privatedata
 
 
-async def addOption(message: discord.Message, serverData: classes.ServerData, data: dict):
+async def addOption(message: discord.Message, serverData: classes.ServerData):
     """
     Adds a {role: reaction} pair to be used in the creation of a role changing message
 
@@ -16,7 +16,6 @@ async def addOption(message: discord.Message, serverData: classes.ServerData, da
 
     :param message: Message context
     :param serverData: Server data
-    :param data: Loaded data
     """
     if not (message.author.guild_permissions.administrator or message.author.id in privatedata.whitelist):
         await message.channel.send("You don't have permission to use this command")
@@ -42,7 +41,7 @@ async def addOption(message: discord.Message, serverData: classes.ServerData, da
 
         await message.add_reaction('👍')
 
-        datahandling.writeserverdata(message.guild.id, serverData, data)
+        datahandling.writeserverdata(message.guild.id, serverData)
         del reaction, role, newData
         gc.collect()
 
@@ -51,7 +50,7 @@ async def addOption(message: discord.Message, serverData: classes.ServerData, da
         return
 
 
-async def addChanger(message: discord.Message, serverData: classes.ServerData, client: discord.Client, data: dict):
+async def addChanger(message: discord.Message, serverData: classes.ServerData, client: discord.Client):
     """
     Adds a changer message to a specific channel so users can alternate roles. Clears added options after creation
 
@@ -61,7 +60,6 @@ async def addChanger(message: discord.Message, serverData: classes.ServerData, c
     :param message: Message context
     :param serverData: Server data
     :param client: Client context
-    :param data: Loaded data
     """
     if not (message.author.guild_permissions.administrator or message.author.id in privatedata.whitelist):
         await message.channel.send("You don't have permission to use this command")
@@ -69,7 +67,7 @@ async def addChanger(message: discord.Message, serverData: classes.ServerData, c
 
     try:
         content = str(message.content)
-        channelId = int(message.content.split(' ')[1])
+        channelId = int(content.split(' ')[1])
 
     except (IndexError, ValueError):
         await message.channel.send("Incorrect syntax, use '$addchanger <channelID>'")
@@ -104,14 +102,14 @@ async def addChanger(message: discord.Message, serverData: classes.ServerData, c
     if serverData.rolechangerids[0] == '<NA>':
         serverData.rolechangerids.pop(0)
 
-    datahandling.writeserverdata(message.guild.id, serverData, data)
+    datahandling.writeserverdata(message.guild.id, serverData)
 
-    del content, channelId, canal, texto, mensagem, idMensagem, serverData, data, message
+    del content, channelId, canal, texto, mensagem, idMensagem, serverData, message
     gc.collect()
     return
 
 
-async def addVote(message: discord.Message, serverData: classes.ServerData, client: discord.Client, data: dict):
+async def addVote(message: discord.Message, serverData: classes.ServerData, client: discord.Client):
     """
     Adds a vote message to a specific channel so users can alternate roles. Clears added options after creation.
     Vote messages, unlike changer messages, do not do anything when reactions are added and are used only for easy
@@ -123,7 +121,6 @@ async def addVote(message: discord.Message, serverData: classes.ServerData, clie
     :param message: Message context
     :param serverData: Server data
     :param client: Client context
-    :param data: Loaded data
     """
     if not (message.author.guild_permissions.administrator or message.author.id in privatedata.whitelist):
         await message.channel.send("You don't have permission to use this command")
@@ -131,7 +128,7 @@ async def addVote(message: discord.Message, serverData: classes.ServerData, clie
 
     try:
         content = str(message.content)
-        channelId = int(message.content.split(' ')[1])
+        channelId = int(content.split(' ')[1])
 
     except (IndexError, ValueError):
         await message.channel.send("Incorrect syntax, use '$addvote <channelID>'")
@@ -162,31 +159,30 @@ async def addVote(message: discord.Message, serverData: classes.ServerData, clie
     if serverData.rolechangerids[0] == '<NA>':
         serverData.rolechangerids.pop(0)
 
-    datahandling.writeserverdata(message.guild.id, serverData, data)
-    del content, channelId, canal, texto, mensagem, serverData, data, message
+    datahandling.writeserverdata(message.guild.id, serverData)
+    del content, channelId, canal, texto, mensagem, serverData, message
     gc.collect()
     return
 
 
-async def check(client, message, serverData, data):
+async def check(client, message, serverData):
     """
     Main check function
 
     :param client: Client context
     :param message: Message context
     :param serverData: Server data
-    :param data: Loaded data
     """
 
     if message.content.startswith('$addoption'):
-        await addOption(message, serverData, data)
+        await addOption(message, serverData)
 
     # Adds a changer message to a specific channel so users can alternate roles.
     # Also clears the options added in the cache
     if message.content.startswith('$addchanger'):
-        await addChanger(message, serverData, client, data)
+        await addChanger(message, serverData, client)
 
     # Uses the {role: reaction} pairs to create votes instead of changers.
     # Votes, unlike changers, will not have their message IDs stored and reacting on them will not trigger anything.
     if message.content.startswith('$addvote'):
-        await addVote(message, serverData, client, data)
+        await addVote(message, serverData, client)

@@ -62,7 +62,7 @@ def attDegrees(val: float) -> float:
     return round((val * 180)/PI)
 
 
-async def addPointCMD(message: discord.Message, serverData: classes.ServerData, data: dict):
+async def addPointCMD(message: discord.Message, serverData: classes.ServerData):
     """
     Adds a point to be used in the graph making (note: different from $storepoint, which saves a point to be loaded).
     This point will get deleted once the graphs are made.
@@ -73,7 +73,7 @@ async def addPointCMD(message: discord.Message, serverData: classes.ServerData, 
 
     :param message: Message context
     :param serverData: Server data
-    :param data: Loaded data
+
     """
     try:
         texts = str(message.content).split(' ')
@@ -130,10 +130,10 @@ async def addPointCMD(message: discord.Message, serverData: classes.ServerData, 
     serverData.cached.datapoints.update(point)
 
     await message.add_reaction('\U0001F44D')
-    datahandling.writeserverdata(message.guild.id, serverData, data)
+    datahandling.writeserverdata(message.guild.id, serverData)
 
 
-async def loadPointCMD(message: discord.Message, serverData: classes.ServerData, data: dict):
+async def loadPointCMD(message: discord.Message, serverData: classes.ServerData):
     """
     Loads a stored point to be used in graph making
 
@@ -142,7 +142,7 @@ async def loadPointCMD(message: discord.Message, serverData: classes.ServerData,
 
     :param message: Message context
     :param serverData: Server data
-    :param data: Loaded data
+
     """
     try:
         name = str(message.content).split(' ')[1]
@@ -161,10 +161,10 @@ async def loadPointCMD(message: discord.Message, serverData: classes.ServerData,
 
     serverData.cached.datapoints.update(pointentry)
     await message.add_reaction('\U0001F44D')
-    datahandling.writeserverdata(message.guild.id, serverData, data)
+    datahandling.writeserverdata(message.guild.id, serverData)
 
 
-async def loadAllPointsCMD(message: discord.Message, serverData: classes.ServerData, data: dict):
+async def loadAllPointsCMD(message: discord.Message, serverData: classes.ServerData):
     """
     Loads all stored point to use in graph making
 
@@ -173,7 +173,7 @@ async def loadAllPointsCMD(message: discord.Message, serverData: classes.ServerD
 
     :param message: Message context
     :param serverData: Server data
-    :param data: Loaded data
+
     """
     for key in serverData.storedpoints.keys():
         pointentry = {key: serverData.storedpoints[key]}
@@ -181,7 +181,7 @@ async def loadAllPointsCMD(message: discord.Message, serverData: classes.ServerD
 
     await message.add_reaction('\U0001F44D')
     await message.channel.send("Loaded {} point(s)".format(str(len(serverData.storedpoints))))
-    datahandling.writeserverdata(message.guild.id, serverData, data)
+    datahandling.writeserverdata(message.guild.id, serverData)
 
 
 async def graphA(message: discord.Message, serverData: classes.ServerData, usernames: list, parameters: list):
@@ -489,7 +489,7 @@ async def generateGraphsCMD(message: discord.Message, serverData: classes.Server
     gc.collect()
 
 
-async def check(message, serverData, data):
+async def check(message, serverData):
     """
     Main check function
 
@@ -501,17 +501,16 @@ async def check(message, serverData, data):
 
     :param message: Message context
     :param serverData: Server data
-    :param data: Loaded data
     """
 
     if message.content.startswith('$addpoint'):
-        await addPointCMD(message, serverData, data)
+        await addPointCMD(message, serverData)
 
     if message.content.startswith('$loadpoint'):
-        await loadPointCMD(message, serverData, data)
+        await loadPointCMD(message, serverData)
 
     if message.content.startswith('$loadallpoints'):
-        await loadAllPointsCMD(message, serverData, data)
+        await loadAllPointsCMD(message, serverData)
 
     if message.content.startswith('$generategraphs'):
         await generateGraphsCMD(message, serverData)

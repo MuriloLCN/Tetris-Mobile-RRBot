@@ -6,17 +6,16 @@ import discord
 import datahandling
 
 
-async def check(client, payload, data):
+async def check(client, payload):
     """
     Triggers every time a reaction is added. Checks if the message is designated for changing roles and does so
     accordingly.
 
     :param client: Client context
     :param payload: Payload context
-    :param data: Loaded data
     """
 
-    serverData = datahandling.getserverdata(payload.guild_id, data)
+    serverData = datahandling.loadData(str(payload.guild_id))
 
     if str(payload.message_id) not in serverData.rolechangerids:
         return
@@ -90,7 +89,7 @@ async def check(client, payload, data):
             except AttributeError:
                 continue
 
-        del channel, message, user, reaction, serverData, rows, removeRoles, isOption, role, data
+        del channel, message, user, reaction, serverData, rows, removeRoles, isOption, role
         gc.collect()
 
     else:

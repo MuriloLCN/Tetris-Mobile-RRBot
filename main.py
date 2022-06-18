@@ -7,7 +7,6 @@ import asyncio
 import bonuspinging
 import calculators
 import classes
-import dailyreminder
 import datahandling
 import dataupdate
 import graphs
@@ -53,95 +52,66 @@ async def on_message(message):
 
     :param message: Message context
     """
+
     global matches
 
-    if str(message.channel.type) == 'private' and message.author != client.user and message.content.startswith('$'):
+    if str(message.channel.type) == 'private':
         # Commands need server data to be loaded, so cannot be used in DMs
-        return
-
-    if str(message.channel.type) == 'private' and message.author != client.user:
-        # This serves as a placeholder for a future support system.
-        usuario = await client.fetch_user(myid)
-        dm = await usuario.create_dm()
-        await dm.send(str(message.author) + ': ' + str(message.content))
-        del usuario, dm
         return
 
     # Only moves forward if the message is relevant to the bot
     if not message.content.startswith('$'):
-        if not message.author.id == alarmbotid:
-            return
+        return
 
     # Loads data
-    data = datahandling.loadDict()
-
-    for key in data.keys():
-        data[key] = classes.updateObject(data[key])
-
     try:
         curId = message.guild.id
-        serverData = datahandling.getserverdata(curId, data)
+        serverData = datahandling.loadData(str(curId))
     except Exception as err:
         usuario = await client.fetch_user(myid)
         dm = await usuario.create_dm()
         await dm.send('Error: ' + str(err))
         return
 
-    # Gets the AlarmBot message and updates pending alarm ID
-    if message.author.id == alarmbotid:
-        if message.embeds:
-            try:
-                stringy = str(message.embeds[0].to_dict()['fields'][0]['name'])
-                gotId = stringy.split(' ')[3]
-                for entry in serverData.alarms.keys():
-                    if serverData.alarms[entry][0] == 'temp':
-                        serverData.alarms[entry][0] = gotId
-                        break
-                datahandling.writeserverdata(message.guild.id, serverData, data)
-                del stringy, gotId
-                return
-            except (IndexError, ValueError):
-                return
-
     if message.author == client.user:
         return
         # Just want to keep this here in case I need to do something using it's own messages in the future
 
     # Common commands
-    await helpcommand.check(message, serverData, data)
+    await helpcommand.check(message, serverData)
 
     await timer.check(message, serverData)
 
     await infocmds.check(client, message)
 
-    await dataupdate.check(message, serverData, data)
+    await dataupdate.check(message, serverData)
 
     await calculators.check(message, serverData)
 
     await matchmaking.check(message, matches, client)
 
-    await rolegiving.check(client, message, serverData, data)
+    await rolegiving.check(client, message, serverData)
 
-    # Usually it's better to turn this into a guard clause but keeping it indented helps to see which one's which
+    if curId in blacklist:
+        return
+
+    await rotation.check(message, serverData, client)
+
+    await savingtetris.check(message, serverData)
+
+    await bonuspinging.check(message, serverData)
+
+    # await graphs.check(message, serverData, data)
+    # Keeping this here until I fix completely the memory leak from the radar chart
+    asyncio.get_event_loop().create_task(graphs.check(message, serverData))
+
+    await clock.check(message)
+
     if message.guild.id in privatedata.fullAccessServers:
 
-        await rotation.check(message, serverData, data, client)
+        await performancetests.check(message, serverData, client, matches)
 
-        await savingtetris.check(message, serverData, data)
-
-        await bonuspinging.check(message, serverData, data)
-
-        await dailyreminder.check(client, message, serverData, data)
-
-        #await graphs.check(message, serverData, data)
-        # Keeping this here until memory leak gets better
-        asyncio.get_event_loop().create_task(graphs.check(message, serverData, data))
-
-        await performancetests.check(message, serverData, data, client, matches)
-
-        await clock.check(message)
-
-    del curId, data, key, message, serverData
+    del curId, message, serverData
     gc.collect()
 
 
@@ -151,16 +121,12 @@ async def on_raw_reaction_add(payload):
     Event handler for reaction addition on Discord messages
     :param payload: Payload context
     """
-    data = datahandling.loadDict()
 
-    for key in data.keys():
-        data[key] = classes.updateObject(data[key])
+    await rolechanger.check(client, payload)
 
-    await rolechanger.check(client, payload, data)
+    await helpcommand.reaction_check(client, payload)
 
-    await helpcommand.reaction_check(client, payload, data)
-
-    del data, key, payload
+    del payload
     gc.collect()
 
 try:
