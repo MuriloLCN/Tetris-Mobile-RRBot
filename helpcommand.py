@@ -70,7 +70,7 @@ async def reaction_check(client, payload):
         texts.menu_help_two,
         texts.menu_help_three,
         texts.menu_help_four,
-        texts.meun_help_five,
+        texts.menu_help_five,
         texts.menu_help_six,
         texts.menu_help_seven,
         texts.menu_help_eight,

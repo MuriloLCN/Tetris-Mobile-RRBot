@@ -265,8 +265,7 @@ async def appendChangerIDCMD(message: discord.Message, serverData: classes.Serve
         return
 
     try:
-        value = str(message.content).split(' ')[1]  # Yes, they are stored as str and not string for reasons
-        # past me should know...
+        value = str(message.content).split(' ')[1]
     except (IndexError, ValueError):
         await message.channel.send("Invalid command, correct usage:\n$addchangerid <messageID>")
         return

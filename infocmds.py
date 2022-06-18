@@ -6,7 +6,7 @@ import texts
 
 async def requestVerify(client: discord.Client, message: discord.Message):
     """
-    Sends a verification request via DMs for a given server. Only verified servers have full access to commands.
+    Sends a verification request via DMs for a given server.
 
     :param client: Client context
     :param message: Message context

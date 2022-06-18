@@ -17,51 +17,6 @@ bonus = "```The team bonus is the bonus that multiplies each reward that the tea
         "Bonus = 25 * (2 ^ (floor(number of players done/5))).\n"\
         "> This formula only works for 30>number of players>=5, because there is no bonus for less than 5 nor 30```"
 
-modes = "```Here's a list of all the gamemodes that are/were in the game\n\n"\
-        "Marathon | Our current marathon\n"\
-        "Quick Play | 3 minutes race\n"\
-        "Royale | Our current royale\n"\
-        "Old Royale | Old royale system (no PvP, win by endurance/patience)\n"\
-        "Primetime | Gameshow with cash prizes\n"\
-        "Modes in which level increases every two line clears: \n" \
-        "  Easy as a pie (season 11)\n" \
-        "  Ninja Trials (season 12)\n" \
-        "  Double Scoop (season 12)\n" \
-        "  Let it snow (season 12)\n" \
-        "  Fire breath (season 13|1)\n" \
-        "  Hugging (season 13|1)\n" \
-        "  Chocolate Bliss (season 13|1)\n" \
-        "  Perfect Slice (season 14|2)\n" \
-        "  Ice Walk (season 14|2)\n" \
-        "Modes in which the pieces are all random:\n" \
-        "  Hallow's eve (season 10)\n" \
-        "  Folding Madness (season 11)\n" \
-        "  Tetricassen (season 11)\n" \
-        "  Lotta Llama (season 12)\n" \
-        "  Wacky Wobbler (season 13|1)\n" \
-        "  Year of the tiger (season 14|2)\n" \
-        "  Full Moon (season 14|2)\n" \
-        "  Wild (season 15|3)\n"\
-        "```"
-
-seasons = "```Here's a list of recorded seasons for now\n\n"\
-          "[1] Christmas Season (even though it was in January...)\n"\
-          "[2] Valentine Season\n"\
-          "[3] Ancient Egypt Season\n"\
-          "[4] Easter Season\n"\
-          "[5] Under the sea Season\n"\
-          "[6] Space Season\n"\
-          "[7] Japan Season\n"\
-          "[8] Pet Season\n"\
-          "[9] Dino season\n"\
-          "[10] Halloween Season\n"\
-          "[11] Adventure Season\n" \
-          "[12] Winter Season\n" \
-          "[13|1] Monters Season\n" \
-          "[14|2] Love Quest Season\n" \
-          "[15|3] Space Fantasy Season\n"\
-          "```"
-
 guides = ""\
          "Here are a few guides on the most common topics\n\n"\
          "> Tetrising: https://four.lol/stacking/tetris\n"\
@@ -69,7 +24,8 @@ guides = ""\
          "> All Clears: https://four.lol/perfect-clears/opener\n"\
          "> Openers: https://four.lol/openers/practical-openers\n"\
          "> 4 Wide: https://four.lol/stacking/4-wide\n"\
-         "> Supershocky's guide on ST Stacking: https://docs.google.com/document/d/1oqu0zqANYqorEf3tRpWuoMQ8FIJPWCi13uJSjgjrvbA/edit?usp=sharing\n\n"\
+         "> Supershocky's guide on ST Stacking: https://docs.google.com/document/d/1oqu0zqANYqorEf3tRpWuoMQ8FIJPWCi13uJSjgjrvbA/edit?usp=sharing\n\n" \
+         "> Twists: https://harddrop.com/wiki/List_of_twists\n"\
          "More guides will be added in the future\n" \
          ""
 
@@ -182,7 +138,7 @@ menu_help_four = "```(help page 4)\n" \
                  "Adds a visual list of the queue to the channel that gets updated with all names.\n" \
                  "```"
 
-meun_help_five = "```(help page 5)\n" \
+menu_help_five = "```(help page 5)\n" \
                  "Notification systems\n" \
                  "[Verified only]\n" \
                  "> $savedtetris\n" \
