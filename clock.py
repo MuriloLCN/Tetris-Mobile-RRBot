@@ -176,8 +176,8 @@ async def clockLoop(client: discord.client):
     # Waits until start of next minute to start clock loop
     await asyncio.sleep(math.floor(timeUntilNextMinute.seconds))
 
-    # Host's timezone
-    currentTimezone = -3
+    # Host's timezone (Was -3, now is 0)
+    currentTimezone = 0
 
     while True:
         allAlarms = loadAlarms()
