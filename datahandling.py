@@ -10,7 +10,7 @@ def loadData(serverID: str) -> classes.ServerData:
     """
 
     dirname = os.path.abspath(__file__)
-    finalPath = dirname.replace('datahandling.py', "servers\\")
+    finalPath = dirname.replace('datahandling.py', "servers/")
 
     if not os.path.exists(finalPath + serverID + '.pkl'):
         t = open(finalPath + serverID + '.pkl', 'w')
@@ -34,7 +34,7 @@ def writeserverdata(serverID: str, serverData: classes.ServerData):
     :param serverData: The updated data for that server (classes.ServerData)
     """
     dirname = os.path.abspath(__file__)
-    finalPath = dirname.replace('datahandling.py', "servers\\")
+    finalPath = dirname.replace('datahandling.py', "servers/")
 
     # Save it to file
     with open(f"{finalPath}{serverID}.pkl", 'wb') as f:
