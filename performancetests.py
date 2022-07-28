@@ -12,7 +12,6 @@ import rolegiving
 import rotation
 import savingtetris
 import timer
-import matchmaking
 
 import privatedata
 
@@ -176,7 +175,6 @@ async def all_checks(message: discord.Message, serverdata: classes.ServerData, c
     await rotation.check(message, serverdata, client)
     await savingtetris.check(message, serverdata)
     await timer.check(message, serverdata)
-    await matchmaking.check(message, matches, client)
 
 
 async def check(message, serverdata, client, matches):

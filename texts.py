@@ -81,9 +81,6 @@ menu_help_one = "```(help page 1)\n" \
                 "> $createtimer &<timezone> &<hour>:<minute>\n" \
                 "Creates a timer to a set amount of minutes from the current time or to a set time.\n" \
                 "Pings the designed role once the timer runs out\n\n" \
-                "Matchmaking commands [WIP]\n" \
-                "> $matchmaking\n" \
-                "Joins the matchmaking lobby. Once lobby is full every plyer is pinged to join royale lobby.\n" \
                 "```" \
                 ""
 
@@ -254,5 +251,3 @@ menu_help_header = "```\nTetris Mobile RRBot Help command" \
                    "Page 8: Graphing commands\n" \
                    "Page 9: Admin and management commands\n" \
                    "```"
-
-# TODO: Make $updatereferencevalues take in as an optional parameter a stored point

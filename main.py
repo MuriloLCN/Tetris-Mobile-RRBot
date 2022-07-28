@@ -18,7 +18,6 @@ import rolegiving
 import rotation
 import savingtetris
 import timer
-import matchmaking
 import performancetests
 import clock
 
@@ -87,8 +86,6 @@ async def on_message(message):
     await dataupdate.check(message, serverData)
 
     await calculators.check(message, serverData)
-
-    await matchmaking.check(message, matches, client)
 
     await rolegiving.check(client, message, serverData)
 

@@ -7,20 +7,19 @@ import datahandling
 import texts
 
 
-async def getVisualizerText(serverData: classes.ServerData, client: discord.Client):
+async def getVisualizerText(serverData: classes.ServerData):
     """
     Returns a string with the names of everyone waiting in the entry and exit queues.
 
     :param serverData: Server data
-    :param client: Client context
     """
     enteringText = 'Waiting to enter:\n'
     exitText = '\nWaiting to exit:\n'
     for name in serverData.cached.entryqueue:
-        user = await client.fetch_user(name)
+        user = name[1]
         enteringText += str(user) + '\n'
     for name in serverData.cached.exitqueue:
-        user = await client.fetch_user(name)
+        user = name[1]
         exitText += str(user) + '\n'
 
     return "```" + enteringText + exitText + "```"
@@ -34,7 +33,7 @@ async def updateVisualizers(serverData: classes.ServerData, client: discord.Clie
     :param client: Client context
     :param originalMessage: Original message context (used to get serverID)
     """
-    text = await getVisualizerText(serverData, client)
+    text = await getVisualizerText(serverData)
 
     for item in serverData.rotationvisualizerids.keys():
         try:
@@ -52,7 +51,7 @@ async def updateVisualizers(serverData: classes.ServerData, client: discord.Clie
             datahandling.writeserverdata(originalMessage.guild.id, serverData)
 
 
-async def compareQueue(message: discord.Message, entering: bool, entryList: list, exitList: list, dataClass: classes.ServerData):
+async def compareQueue(message: discord.Message, entering: bool, entryList: list, exitList: list, dataClass: classes.ServerData, client: discord.Client):
     """
     Compares two queues to see if there are matching interests
 
@@ -64,6 +63,10 @@ async def compareQueue(message: discord.Message, entering: bool, entryList: list
     """
     user = str(message.author.id)
 
+    nick = await client.fetch_user(int(user))
+
+    pair = [user, nick.name]
+
     if entering:
         comparative = exitList.copy()
 
@@ -72,13 +75,13 @@ async def compareQueue(message: discord.Message, entering: bool, entryList: list
 
     if len(comparative) > 0:
         await message.channel.send(
-            "It's a match! <@" + str(user) + "> and <@" + str(comparative[0]) + "> can switch!"
+            "It's a match! <@" + str(user) + "> and <@" + str(comparative[0][0]) + "> can switch!"
         )
         if entering:
-            dataClass.cached.entryqueue.remove(user)
+            dataClass.cached.entryqueue.remove(pair)
             dataClass.cached.exitqueue.pop(0)
         else:
-            dataClass.cached.exitqueue.remove(user)
+            dataClass.cached.exitqueue.remove(pair)
             dataClass.cached.entryqueue.pop(0)
 
     datahandling.writeserverdata(message.guild.id, dataClass)
@@ -92,7 +95,7 @@ async def addVisualizer(message: discord.Message, serverData: classes.ServerData
     :param serverData: Server data
     :param client: Client context
     """
-    visualizertext = await getVisualizerText(serverData, client)
+    visualizertext = await getVisualizerText(serverData)
 
     newMessage = await message.channel.send(visualizertext)
 
@@ -118,17 +121,21 @@ async def enter(message: discord.Message, serverData: classes.ServerData, client
     """
     name = message.author.id
 
-    if str(name) in serverData.cached.entryqueue:
-        serverData.cached.entryqueue.remove(str(name))
+    nick = await client.fetch_user(int(name))
+
+    pair = [str(name), nick.name]
+
+    if pair in serverData.cached.entryqueue:
+        serverData.cached.entryqueue.remove(pair)
         datahandling.writeserverdata(message.guild.id, serverData)
         await message.add_reaction('\U00002B55')
 
     else:
-        serverData.cached.entryqueue.append(str(name))
+        serverData.cached.entryqueue.append(pair)
         datahandling.writeserverdata(message.guild.id, serverData)
         await message.add_reaction('\U0001F44D')
 
-        await compareQueue(message, True, serverData.cached.entryqueue, serverData.cached.exitqueue, serverData)
+        await compareQueue(message, True, serverData.cached.entryqueue, serverData.cached.exitqueue, serverData, client)
 
     await updateVisualizers(serverData, client, message)
     del name, serverData, message
@@ -148,16 +155,20 @@ async def leave(message: discord.Message, serverData: classes.ServerData, client
     """
     name = message.author.id
 
-    if str(name) in serverData.cached.exitqueue:
-        serverData.cached.exitqueue.remove(str(name))
+    nick = await client.fetch_user(int(name))
+
+    pair = [str(name), nick.name]
+
+    if pair in serverData.cached.exitqueue:
+        serverData.cached.exitqueue.remove(pair)
         datahandling.writeserverdata(message.guild.id, serverData)
         await message.add_reaction('\U00002B55')
 
     else:
-        serverData.cached.exitqueue.append(str(name))
+        serverData.cached.exitqueue.append(pair)
         datahandling.writeserverdata(message.guild.id, serverData)
         await message.add_reaction('\U0001F44D')
-        await compareQueue(message, False, serverData.cached.entryqueue, serverData.cached.exitqueue, serverData)
+        await compareQueue(message, False, serverData.cached.entryqueue, serverData.cached.exitqueue, serverData, client)
 
     await updateVisualizers(serverData, client, message)
     del name, serverData, message
@@ -177,7 +188,7 @@ async def freeSpot(message: discord.Message, client: discord.Client):
     serverData = datahandling.loadData(str(message.guild.id))
 
     if len(serverData.cached.entryqueue) > 0:
-        name = str(serverData.cached.entryqueue[0])
+        name = str(serverData.cached.entryqueue[0][0])
         await message.channel.send("There's an open spot, <@" + name + ">, you can enter")
         serverData.cached.entryqueue.pop(0)
         await updateVisualizers(serverData, client, message)
