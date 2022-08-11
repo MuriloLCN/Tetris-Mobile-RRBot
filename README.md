@@ -63,17 +63,6 @@ Commands:
 Both create a timer from N minutes from now. The first one takes in the time directly, so if let's say you passed in 9 in the command, it'd take 9 minutes for
 the timer to run out and ping you. The second one takes a timezone and a time, and once it reaches that time, you'll be pinged.
 
-### 1.3.1.1 Matchmaking system
-
-This system is still very rudimentary and early in creation. The core idea behind it is to make a more dynamic and easier to use version of the timer system, but
-in it's current state it still lacks a lot of features.
-
-Commands:
-
- ```$matchmaking```
- 
- It shows a self updating message with the list of players in the matchmaking lobby with you. Once the lobby fills up, the players in it are pinged.
- 
  ### 1.3.2 Content commands
  
  These are simple commands to help you with some info.
@@ -113,7 +102,9 @@ Changes the role that gets pinged in the timer system.
 ```$setnewlimit <limit>```
 Changes the time limit of how long a timer can be.
   
-## 1.4 Verified-only systems
+## ~1.4 Verified-only systems~
+
+## Notice: The verification system was lifted so now every server has access to these commands
 
 ### 1.4.1 Calculator commands
 
@@ -331,18 +322,17 @@ The general idea of the bot falls under this diagram.
 
 Here's what each file does:
 
-```dataset.pkl```
+~```dataset.pkl```~ (now every server as a separate file kept in ```.../servers/```)
 and
 ```alarmset.pkl```
 are both used to store data and serve as sort of databases.
-```dataset.pkl``` stores a Python Dict containing the following:
-```{Server ID: Server Data}``` for each server, where Server Data is an instance of the class serverData defined in ```classes.py```
+```/servers/``` stores pickle files for each server and loads their server data directly, where the data is an instance of the class serverData defined in ```classes.py```
 ```alarmset.pkl``` stores a Python Dict containing the following:
 ```{player ID: [hour, minute, timezone, desired channel ID, isSilenced]}```, where only isSilenced is a Boolean while the rest are Integers. 
 
 ```requirements.txt``` are the dependencies of the project.
 
-```infocmds.py```, ```savingtetris.py```, ```helpcommand.py```, ```matchmaking.py```, ```bonuspinging.py```, ```timer.py```, ```rolegiving.py```, ```rotation.py```,
+```infocmds.py```, ```savingtetris.py```, ```helpcommand.py```, ```bonuspinging.py```, ```timer.py```, ```rolegiving.py```, ```rotation.py```,
 ```graphs.py```, ```dataupdate.py``` and ```calculators.py``` are the command files. They are where the magic happens and can be seen as merely extensions of the
 ```main.py``` file, as all of their context comes from there. It could all be done in one file but it's much better to keep separate systems in separate files for
 organization. 
@@ -357,7 +347,7 @@ things related to the function of the daily reminder system, and serves as a com
 ```main.py``` is the main file, and also the one that needs to run to start the bot. It imports all other files and is where the messages are first forwarded to.
 
 ```performancetests.py``` is a quick set of tests for commands in terms of input sanitizing and performance. Originally added because of a memory leak, not very
-useful on most ocasions.
+useful on most occasions.
 
 Two files are used in the project but are not in the repository, as they store private data privately and locally.
  
@@ -475,13 +465,3 @@ AlarmBot no longer needed for the new system to work
 Rewrote many things
 
 Better documentation of the code
-
-### - Intended things for the future
-
-Store Discord.py classes as a whole -> Reduce needs to make API calls using client.fetch_<something>()
-  
-Rework radar graph generation -> Completely fix memory leak.
-  
-See what features can be implemented or discarded in future game updates.
-  
-And many other things...
