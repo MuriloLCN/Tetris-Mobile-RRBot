@@ -38,8 +38,7 @@ hence the name, but has since grown to have a lot of tools used to coordinate an
 graphs, etc. have been added with teams in mind.
 
 This bot contains several systems and lots of commands made with the organization of an international team of players through a Discord server in mind, as has been
-tailored around this concept. In order to access most of the systems and functions within the bot, a server needs to be verified, as this is an ongoing project and
-things can break from time to time. To verify a server, simply drop me a DM (PyrooKil#6673) or use the command '$requestverify'.
+tailored around this concept.
 
 ## 1.2 Installation
 
