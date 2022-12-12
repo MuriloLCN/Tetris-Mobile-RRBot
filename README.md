@@ -42,7 +42,9 @@ tailored around this concept.
 
 ## 1.2 Installation
 
-You can add the bot to your server (like most bots) with this link: https://discord.com/api/oauth2/authorize?client_id=867241160062009360&permissions=8&scope=bot
+### Important notice: The service which I used to host the bot is no longer online, so if you want to use this bot you'll have to download the codebase, add your data to a new file 'privatedata.py' (not included in this repository) and run 'main.py' to get it online. 
+
+~~You can add the bot to your server (like most bots) with this link: https://discord.com/api/oauth2/authorize?client_id=867241160062009360&permissions=8&scope=bot~~
 
 ## 1.3 Public systems
 
