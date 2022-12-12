@@ -5,7 +5,6 @@ import math
 import discord
 
 import classes
-import privatedata
 import texts
 
 

@@ -24,15 +24,10 @@ import clock
 intent = discord.Intents().all()
 
 blacklist = privatedata.blacklist
-myid = privatedata.myid
-alarmbotid = privatedata.alarmbotid
 token = privatedata.token
-devtoken = privatedata.devtoken  # Token used for extensive testing
 
 matches = classes.Match()
-
 client = discord.Client(intents=intent)
-
 
 @client.event
 async def on_ready():
@@ -51,7 +46,6 @@ async def on_message(message):
 
     :param message: Message context
     """
-
     global matches
 
     if str(message.channel.type) == 'private':
@@ -67,9 +61,7 @@ async def on_message(message):
         curId = message.guild.id
         serverData = datahandling.loadData(str(curId))
     except Exception as err:
-        usuario = await client.fetch_user(myid)
-        dm = await usuario.create_dm()
-        await dm.send('Error: ' + str(err))
+        print(f'Error: {err}')
         return
 
     if message.author == client.user:
@@ -81,7 +73,7 @@ async def on_message(message):
 
     await timer.check(message, serverData)
 
-    await infocmds.check(client, message)
+    await infocmds.check(message)
 
     await dataupdate.check(message, serverData)
 
@@ -104,9 +96,7 @@ async def on_message(message):
 
     await clock.check(message)
 
-    if message.guild.id in privatedata.fullAccessServers:
-
-        await performancetests.check(message, serverData, client, matches)
+    await performancetests.check(message, serverData, client, matches)
 
     del curId, message, serverData
     gc.collect()
@@ -130,5 +120,5 @@ try:
     client.run(token)
 except (aiohttp.client_exceptions.ClientConnectorError, Exception):
     print('Could not connect to Discord API')
-    # Had to put this here because every time there was a connection error my token
-    # was briefly visible on the hosting platform's log command, so this no longer happens
+
+
