@@ -22,16 +22,7 @@ def getscale(value: float) -> int:
     :param value: The number to be checked (float)
     :return: The scale of the number (int)
     """
-    if value < 0:
-        value = -1 * value
-
-    scl = 1
-
-    while value > 10:
-        value = value/10
-        scl += 1
-
-    return scl
+    return math.floor(math.log10(value)) + 1
 
 
 def attLinspace(start: float, end: float, num: int):
