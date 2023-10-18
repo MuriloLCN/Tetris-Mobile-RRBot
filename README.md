@@ -5,25 +5,24 @@
 ## 1. User guide
 ### 1.1 What is this bot
 ### 1.2 Installation
-### 1.3 Public systems
+### 1.3 Subsystems
 #### 1.3.1 Timer system
 ##### 1.3.1.1 Matchmaking system
 #### 1.3.2 Content commands
 #### 1.3.3 Calculator commands
 #### 1.3.4 Data commands
-### 1.4 Verified-only systems
-#### 1.4.1 Calculator commands
-#### 1.4.2 Rotation System
-#### 1.4.3 Pinging System
-##### 1.4.3.1 Tetris task pinging
-##### 1.4.3.2 Daily task pinging
-#### 1.4.4 Info commands
-#### 1.4.5 Daily reminder system
-#### 1.4.6 Role-changing message system
-##### 1.4.6.1 Vote system
-#### 1.4.7 Graph making system
-##### 1.4.7.1 Point system
-#### 1.4.8 Admin commands
+#### 1.3.5 Calculator commands
+#### 1.3.6 Rotation System
+#### 1.3.7 Pinging System
+##### 1.3.7.1 Tetris task pinging
+##### 1.3.7.2 Daily task pinging
+#### 1.3.8 Info commands
+#### 1.3.9 Daily reminder system
+#### 1.3.10 Role-changing message system
+##### 1.3.10.1 Vote system
+#### 1.3.11 Graph making system
+##### 1.3.11.1 Point system
+#### 1.3.12 Admin commands
 ## 2. General design
 ## 3. Changelog
 
@@ -102,12 +101,8 @@ Changes the role that gets pinged in the timer system.
 
 ```$setnewlimit <limit>```
 Changes the time limit of how long a timer can be.
-  
-## ~1.4 Verified-only systems~
 
-## Notice: The verification system was lifted so now every server has access to these commands
-
-### 1.4.1 Calculator commands
+### 1.3.5 Calculator commands
 
 These are the calculators built to make looking for patterns in player data easier.
 
@@ -140,7 +135,7 @@ Back-to-backs / Difficult Line Clears. These serve as indicators of efficiency r
 like downstacking and other important skills are not picked up by these numbers, and like every calculator, data should be seen with a pinch of salt, humans are
 not numbers). It calculates the three percentages where B2BS is the number of Back-To-Back Line Clears the player has ever performed.
 
-### 1.4.2 Rotation system
+### 1.3.6 Rotation system
 
 This system is designed to help teams where the might be more than 30 players wanting to play at the same time, or teams where players from different timezones
 may want to organize their workflow more efficiently and swiftly. The core idea is: If you want to do an action (enter/leave), you join a queue until a person with a matching
@@ -160,12 +155,12 @@ Signals the next person waiting to join the team that there is a free spot.
 ```$addvisualizer```
 Adds a visual board where the queues are displayed. Helps to see and understand better the current status of the queues.
 
-### 1.4.3 Pinging system
+### 1.3.7 Pinging system
 
 This is a simple and niche system. The basic idea is that you do an action but need to wait for an event to happen before moving forward. In this case the
 actions are unloading stored Tetris Line Clears and proceeding with Team task completion.
 
-#### 1.4.3.1 Tetris task pinging
+#### 1.3.7.1 Tetris task pinging
 
 This helps people who store Tetris Line Clears in Marathon mode and then only count them in whenever the team needs it for the task.
 
@@ -177,7 +172,7 @@ Signals the bot that you have Tetris Line Clears stored in a marathon game.
 ```$tetristask```
 Signals the bot that the Tetris Line Clears task is live, and thus will proceed to ping all players who have stored Tetrises as to put them in for the task.
 
-#### 1.4.3.2 Daily task pinging
+#### 1.3.7.2 Daily task pinging
 
 Similar to the one above, this one is for those waiting for the team to reach a higher bonus (usually 400%) before carrying on with their gameplay.
 
@@ -189,7 +184,7 @@ Signals the bot that you have done your daily tasks and is waiting for the team 
 ```$gotfullbonus```
 Signals the bot that the team has reached full bonus, and this will procced to ping all players who were waiting for it.
 
-### 1.4.4 Info commands
+### 1.3.8 Info commands
 
 Simple info commands regarding some systems.
 
@@ -204,7 +199,7 @@ Help for the tetris task system
 ```$fullbonusping```
 Help for the bonus system
 
-### 1.4.5 Daily reminder system
+### 1.3.9 Daily reminder system
 
 This is a very useful system in which you can set a reminder every day for you to do your daily tasks. Unlike the old system, the new one is much simpler to use
 and to set up. No longer needs AlarmBot to work.
@@ -215,7 +210,7 @@ Commands:
 Creates/Deletes your daily reminder, where HOUR:MINUTE is the time in which you'd like to be reminded, TIMEZONE is your current timezone (...-2,-1,0,1,2...) and
 #CHANNEL is the channel that you'd like to receive your notifications in. You can use 123 as the channel to make them be sent in your DMs for privacy.
 
-### 1.4.6 Role-changing message
+### 1.3.10 Role-changing message
 
 This is our own implementation of the useful 'React here to change your role' messages. You can set up one of these messages by using the commands and generating one
 or by sending your own message and adding it's id with another command. 
@@ -231,7 +226,7 @@ Adds a role changing message with all options that were loaded beforehand to the
 
 Note that once a message is generated, all options are cleared for future messages.
 
-### 1.4.6.1 Vote system
+### 1.3.10.1 Vote system
 
 This is just a quick extension to the Role changing messages, as to easily use the same commands to make a vote message instead of a role changing one.
 The vote message will be similar to the role changing one, but will have no function regarding the addition of emojis.
@@ -241,7 +236,7 @@ Commands:
 ```$addvote <channel ID>```
 Adds a vote message with all options that were loaded beforehand to the desired channel.
 
-### 1.4.7 Graph making system
+### 1.3.11 Graph making system
 
 This system simply helps team leaders to look for patterns in player data by using graphs for it. It can generate up to four different graphs as of current version.
 
@@ -254,7 +249,7 @@ the text 'BD' will generate the second and fourth graphs, and so on.
 
 This command on it's own won't do anything until you have loaded some points into it. So this system is useless without this next one:
 
-### 1.4.7.1 Point system
+### 1.3.11.1 Point system
 
 This point system is simply the system to manage data loading and handling for the graphs, as every graph needs to show some piece of data for it to exist.
 The way data is handled is as forms of points, named collections of data.
@@ -288,7 +283,7 @@ Deletes all currently stored points.
 ```$loadallpoints```
 Loads all currently stored points to be used in graph generation.
 
-### 1.4.8 Admin commands
+### 1.3.12 Admin commands
 
 These are the admin commands that change stored server data. 
 
@@ -314,43 +309,6 @@ Deletes the list of role-changing messages currently active in the server so the
 
 ```$updatereferencevalues <day>/<month>/<year> <quickplay highscore> <marathon highscore> <lines> <tetrises> <allclears> <tspins> <challenges> <login streak> <back-to-backs>```
 Changes the default parameters used in calculations to custom parameters.
-
-# 2. General design
-
-The general idea of the bot falls under this diagram.
-
-![sysdiag](https://user-images.githubusercontent.com/88753590/161403158-bfaef102-8424-4f4f-be9f-465c6299596f.png)
-
-Here's what each file does:
-
-~```dataset.pkl```~ (now every server as a separate file kept in ```.../servers/```)
-and
-```alarmset.pkl```
-are both used to store data and serve as sort of databases.
-```/servers/``` stores pickle files for each server and loads their server data directly, where the data is an instance of the class serverData defined in ```classes.py```
-```alarmset.pkl``` stores a Python Dict containing the following:
-```{player ID: [hour, minute, timezone, desired channel ID, isSilenced]}```, where only isSilenced is a Boolean while the rest are Integers. 
-
-```requirements.txt``` are the dependencies of the project.
-
-```infocmds.py```, ```savingtetris.py```, ```helpcommand.py```, ```bonuspinging.py```, ```timer.py```, ```rolegiving.py```, ```rotation.py```,
-```graphs.py```, ```dataupdate.py``` and ```calculators.py``` are the command files. They are where the magic happens and can be seen as merely extensions of the
-```main.py``` file, as all of their context comes from there. It could all be done in one file but it's much better to keep separate systems in separate files for
-organization. 
-
-```datahandling.py``` and ```classes.py``` are very important files, as in them are defined functions and classes that are used throughout the code.
-```datahandling.py``` contains functions related to storing and retrieving server data from the files, and ```classes.py``` contains the base classes used as
-structure for the data throughout all files.
-
-```clock.py``` is an odd file, as it has it's own methods for file handling, commands and loop function (for the daily reminder system) in itself. It deals with
-things related to the function of the daily reminder system, and serves as a complete replacement of the need of AlarmBot to work.
-
-```main.py``` is the main file, and also the one that needs to run to start the bot. It imports all other files and is where the messages are first forwarded to.
-
-```performancetests.py``` is a quick set of tests for commands in terms of input sanitizing and performance. Originally added because of a memory leak, not very
-useful on most occasions.
-
-Two files are used in the project but are not in the repository, as they store private data privately and locally.
  
 # Version Changelog
 
